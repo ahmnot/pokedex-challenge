@@ -132,30 +132,30 @@
     @keyframes iridescentBorder {
         0%,
         100% {
-            border-color: mediumpurple;
+            outline-color: mediumpurple;
             box-shadow: 0 0 15px mediumpurple;
         }
         20% {
-            border-color: cadetblue;
+            outline-color: cadetblue;
             box-shadow: 0 0 15px cadetblue;
         }
         40% {
-            border-color: dodgerblue;
+            outline-color: dodgerblue;
             box-shadow: 0 0 15px dodgerblue;
         }
         60% {
-            border-color: greenyellow;
+            outline-color: greenyellow;
             box-shadow: 0 0 15px greenyellow;
         }
         80% {
-            border-color: orange;
+            outline-color: orange;
             box-shadow: 0 0 15px orange;
         }
     }
 
     .pokemon-card.selected {
         animation: iridescentBorder 1.0s infinite ease-in-out;
-        border: 2px solid; /* Nécessaire pour l'effet de bordure */
+        outline: 2px solid; /* Nécessaire pour l'effet de bordure */
         box-shadow: 0 0 15px pink; /* Définit une valeur initiale pour le box-shadow */
     }
 

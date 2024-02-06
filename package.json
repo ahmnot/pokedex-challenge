@@ -14,6 +14,7 @@
     "vite": "^5.0.8"
   },
   "dependencies": {
+    "@hubspot/api-client": "^10.2.0",
     "fast-average-color": "^9.4.0",
     "fast-average-color-node": "^3.0.0"
   }
