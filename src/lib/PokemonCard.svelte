@@ -1,13 +1,62 @@
 <script>
+    import { onMount } from "svelte";
+    import { FastAverageColor } from "fast-average-color";
+
     export let pokemon;
+
+    let backgroundColor = "#98d6cb"; // Couleur de fond par défaut d'une image
+
+    let selected = false; // État de sélection de la carte
+
+    let imageElement;
+
+    function toggleSelection() {
+        selected = !selected; // Bascule l'état de sélection
+    }
+
+    function handleKeydown(event) {
+        // Active la sélection avec la touche Enter ou Espace
+        if (event.key === "Enter" || event.key === " ") {
+            toggleSelection();
+            event.preventDefault(); // Empêche le défilement pour la touche Espace
+        }
+    }
+
+    onMount(() => {
+        if (imageElement) {
+            // Sert à remplir le fond de la couleur moyenne de l'image
+            imageElement.onload = () => {
+                const fac = new FastAverageColor();
+                fac.getColorAsync(imageElement, {algorithm: 'simple'})
+                    .then((color) => {
+                        backgroundColor = color.rgba;
+                    })
+                    .catch((e) => {
+                        console.error(
+                            "Erreur lors du calcul de la couleur moyenne:",
+                            e,
+                        );
+                    });
+            };
+        }
+    });
 </script>
 
-<div class="pokemon-card">
-    <div class="pokemon-image-container">
-        <div
-            class="pokemon-image"
-            style="background-image: url({pokemon.image});"
-        ></div>
+<div
+    class="pokemon-card"
+    on:click={toggleSelection}
+    on:keydown={handleKeydown}
+    tabindex="0"
+    role="button"
+    aria-pressed={selected}
+    class:selected
+>
+    <div
+        class="pokemon-image-container"
+        style="background-color: {backgroundColor};"
+    >
+    <img crossOrigin="anonymous" bind:this={imageElement} src={pokemon.image} alt={pokemon.name} class="pokemon-image" />
+
     </div>
     <div class="pokemon-info">
         <h2 class="pokemon-name">{pokemon.name}</h2>
@@ -38,7 +87,6 @@
                 class="pokemon-type"
                 style="background-color: {pokemon.type.color};"
             >
-                
                 <img
                     src={pokemon.type.icon}
                     alt={pokemon.type.label}
@@ -51,21 +99,6 @@
 </div>
 
 <style>
-    .pokemon-card-hr {
-        height: 1px;
-        width: 100%;
-        margin: 0px;
-        border-width: 0;
-        background-color: #efefef;
-    }
-
-    .grey-text {
-        color: #616161;
-    }
-
-    .margin-stats {
-        margin-bottom: 15px;
-    }
 
     .pokemon-card {
         box-sizing: border-box;
@@ -79,7 +112,19 @@
         border: 1px solid rgba(25, 204, 32, 0.2);
         box-shadow: 4px 8px 25px rgba(52, 7, 11, 0.3);
         border-radius: 40px;
-        margin: 20px; /* Ajouté pour éviter le chevauchement des cartes */
+        margin: 15px; /* Ajouté pour éviter le chevauchement des cartes */
+        transition: transform 0.2s ease;
+        cursor: pointer;
+    }
+
+    .pokemon-card:hover {
+        transform: scale(1.25); /* Agrandit la carte de 15% lors du survol */
+    }
+
+    .pokemon-card.selected {
+        box-shadow:
+            0 0 0 6px rgb(195, 0, 255),
+            4px 8px 25px rgba(52, 7, 11, 0.3); /* Simule une bordure externe */
     }
 
     .pokemon-image-container {
@@ -101,6 +146,22 @@
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
+    }
+    
+    .pokemon-card-hr {
+        height: 1px;
+        width: 100%;
+        margin: 0px;
+        border-width: 0;
+        background-color: #efefef;
+    }
+
+    .grey-text {
+        color: #616161;
+    }
+
+    .margin-stats {
+        margin-bottom: 15px;
     }
 
     .pokemon-info {
