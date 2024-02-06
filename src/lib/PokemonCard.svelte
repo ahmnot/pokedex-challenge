@@ -113,12 +113,14 @@
         box-shadow: 4px 8px 25px rgba(52, 7, 11, 0.3);
         border-radius: 40px;
         margin: 15px; /* Ajouté pour éviter le chevauchement des cartes */
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, z-index 0s;
         cursor: pointer;
+        z-index: 1; /* Valeur de base pour s'assurer que les cartes ont un z-index explicite */
     }
 
     .pokemon-card:hover {
-        transform: scale(1.25); /* Agrandit la carte de 15% lors du survol */
+        transform: scale(1.3); /* Agrandit la carte lors du survol */
+        z-index: 10;
     }
 
     .pokemon-card.selected {
