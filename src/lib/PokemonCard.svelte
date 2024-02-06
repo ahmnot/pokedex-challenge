@@ -27,7 +27,7 @@
             // Sert à remplir le fond de la couleur moyenne de l'image
             imageElement.onload = () => {
                 const fac = new FastAverageColor();
-                fac.getColorAsync(imageElement, {algorithm: 'simple'})
+                fac.getColorAsync(imageElement, { algorithm: "simple" })
                     .then((color) => {
                         backgroundColor = color.rgba;
                     })
@@ -55,8 +55,13 @@
         class="pokemon-image-container"
         style="background-color: {backgroundColor};"
     >
-    <img crossOrigin="anonymous" bind:this={imageElement} src={pokemon.image} alt={pokemon.name} class="pokemon-image" />
-
+        <img
+            crossOrigin="anonymous"
+            bind:this={imageElement}
+            src={pokemon.image}
+            alt={pokemon.name}
+            class="pokemon-image"
+        />
     </div>
     <div class="pokemon-info">
         <h2 class="pokemon-name">{pokemon.name}</h2>
@@ -99,7 +104,6 @@
 </div>
 
 <style>
-
     .pokemon-card {
         box-sizing: border-box;
         display: flex;
@@ -113,7 +117,9 @@
         box-shadow: 4px 8px 25px rgba(52, 7, 11, 0.3);
         border-radius: 40px;
         margin: 15px; /* Ajouté pour éviter le chevauchement des cartes */
-        transition: transform 0.2s ease, z-index 0s;
+        transition:
+            transform 0.2s ease,
+            z-index 0s;
         cursor: pointer;
         z-index: 1; /* Valeur de base pour s'assurer que les cartes ont un z-index explicite */
     }
@@ -123,10 +129,34 @@
         z-index: 10;
     }
 
+    @keyframes iridescentBorder {
+        0%,
+        100% {
+            border-color: mediumpurple;
+            box-shadow: 0 0 15px mediumpurple;
+        }
+        20% {
+            border-color: cadetblue;
+            box-shadow: 0 0 15px cadetblue;
+        }
+        40% {
+            border-color: dodgerblue;
+            box-shadow: 0 0 15px dodgerblue;
+        }
+        60% {
+            border-color: greenyellow;
+            box-shadow: 0 0 15px greenyellow;
+        }
+        80% {
+            border-color: orange;
+            box-shadow: 0 0 15px orange;
+        }
+    }
+
     .pokemon-card.selected {
-        box-shadow:
-            0 0 0 6px rgb(195, 0, 255),
-            4px 8px 25px rgba(52, 7, 11, 0.3); /* Simule une bordure externe */
+        animation: iridescentBorder 1.0s infinite ease-in-out;
+        border: 2px solid; /* Nécessaire pour l'effet de bordure */
+        box-shadow: 0 0 15px pink; /* Définit une valeur initiale pour le box-shadow */
     }
 
     .pokemon-image-container {
@@ -149,7 +179,7 @@
         background-position: center;
         background-repeat: no-repeat;
     }
-    
+
     .pokemon-card-hr {
         height: 1px;
         width: 100%;
