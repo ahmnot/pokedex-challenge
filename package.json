@@ -16,6 +16,7 @@
   "dependencies": {
     "@google-cloud/functions": "^3.0.1",
     "@hubspot/api-client": "^10.2.0",
+    "cors": "^2.8.5",
     "fast-average-color": "^9.4.0",
     "fast-average-color-node": "^3.0.0"
   }

@@ -121,7 +121,7 @@
             transform 0.2s ease,
             z-index 0s;
         cursor: pointer;
-        z-index: 1; /* Valeur de base pour s'assurer que les cartes ont un z-index explicite */
+        z-index: 1;
     }
 
     .pokemon-card:hover {
@@ -154,9 +154,9 @@
     }
 
     .pokemon-card.selected {
-        animation: iridescentBorder 1.0s infinite ease-in-out;
+        animation: iridescentBorder 1s infinite ease-in-out;
         outline: 2px solid; /* Nécessaire pour l'effet de bordure */
-        box-shadow: 0 0 15px pink; /* Définit une valeur initiale pour le box-shadow */
+        box-shadow: 0 0 15px pink;
     }
 
     .pokemon-image-container {
@@ -201,7 +201,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
-        width: 100%; /* Utilisez la largeur complète de la carte */
+        width: 100%;
         margin-top: 15px;
     }
 
@@ -255,20 +255,20 @@
 
     .pokemon-type {
         display: flex;
-    align-items: center; /* Alignement vertical au centre */
-    justify-content: center; /* Alignement horizontal au centre */
-    padding: 5px;
-    gap: 10px;
-    width: 50%; /* Ajusté pour la taille souhaitée */
-    background: #19cc20;
-    border-radius: 40px;
-    font-family: "Signika", sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 17px;
-    color: rgba(0, 0, 0, 0.7);
-    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur */
-    margin: 0; /* Ajoutez ceci pour centrer le chip dans son conteneur si nécessaire */
+        align-items: center; /* Alignement vertical au centre */
+        justify-content: center; /* Alignement horizontal au centre */
+        padding: 5px;
+        gap: 10px;
+        width: 50%; 
+        background: #19cc20;
+        border-radius: 40px;
+        font-family: "Signika", sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 17px;
+        color: rgba(0, 0, 0, 0.7);
+        box-sizing: border-box; 
+        margin: 0;
     }
 
     .pokemon-type-icon {
