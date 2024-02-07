@@ -20,11 +20,14 @@
   //   },
   // };
 
+  let nbrePokemons = 12;
+
   let pokemonCardsShown = [];
   let pokemonsDataSent = { pokemons: [] };
   let loading = false;
   let dataLoaded = false;
   let isHovered = false;
+  let notAllowed = true;
 
   const typeToColorMap = {
     Plante: "#19CC20", // Vert
@@ -87,7 +90,7 @@
   onMount(async () => {
     loading = true;
     try {
-      const pokemonPromises = Array.from({ length: 12 }, (_, index) =>
+      const pokemonPromises = Array.from({ length: nbrePokemons }, (_, index) =>
         fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`).then((res) =>
           res.json(),
         ),
@@ -110,16 +113,13 @@
   async function sendToHubSpot() {
     loading = true;
     try {
-      const response = await fetch(
-        "https://europe-west9-pokedex-challenge-413609.cloudfunctions.net/function-send-pokedata-to-hubspot",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(pokemonsDataSent),
+      const response = await fetch("", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(pokemonsDataSent),
+      });
 
       if (response.ok) {
         const result = await response.json();
@@ -166,6 +166,8 @@
         {:else}
           {#if dataLoaded}
             Data loaded ✔️
+          {:else if notAllowed}
+            Not allowed! ❌
           {:else}
             Send to Hubspot
           {/if}
@@ -201,24 +203,6 @@
     100% {
       transform: rotate(360deg);
     }
-  }
-
-  .pokedex-title {
-    font-family: "Rowdies", sans-serif;
-    font-weight: 400;
-    font-size: 42px;
-    color: white;
-    text-align: center;
-    margin-left: 15px;
-    transition: transform 0.1s ease;
-  }
-
-  .pokedex-logo {
-    transition: transform 0.1s ease;
-  }
-
-  .pokedex-logo:hover {
-    transform: scale(1.3);
   }
 
   .grid-container {
@@ -261,8 +245,26 @@
   }
 
   .body-content {
-    padding-top: 120px; /* Ajustez selon la hauteur de votre bannière */
+    padding-top: 120px;
     left: 50%;
+  }
+
+  .pokedex-title {
+    font-family: "Rowdies", sans-serif;
+    font-weight: 400;
+    font-size: 42px;
+    color: white;
+    text-align: center;
+    margin-left: 15px;
+    transition: transform 0.1s ease;
+  }
+
+  .pokedex-logo {
+    transition: transform 0.1s ease;
+  }
+
+  .pokedex-logo:hover {
+    transform: scale(1.3);
   }
 
   /* Styles pour le rectangle de base */
@@ -372,6 +374,7 @@
     z-index: 0;
   }
 
+  /* Taille moyenne-grande */
   @media (max-width: 1570px) {
     .grid-container {
       grid-template-columns: repeat(3, 1fr);
@@ -396,6 +399,7 @@
     }
   }
 
+  /* Taille moyenne */
   @media (max-width: 1150px) {
     .grid-container {
       grid-template-columns: repeat(2, 1fr);
@@ -420,9 +424,39 @@
     }
   }
 
-  @media (max-width: 750px) {
+  /* Taille petite */
+  @media (max-width: 720px) {
     .grid-container {
+      top: 150px;
       grid-template-columns: 1fr;
+    }
+
+    /* Styles pour la bannière */
+    .banner {
+      width: 0;
+    }
+
+    .body-content {
+      padding-top: 180px;
+      left: 50%;
+    }
+
+    .rectangle-2 {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .rectangle-3 {
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .rectangle-2-patch-1,
+    .rectangle-2-patch-2,
+    .rectangle-3-patch-1,
+    .rectangle-3-patch-2 {
+      display: none;
     }
   }
 </style>
