@@ -19,7 +19,7 @@
   //   },
   // };
 
-  let pokemonsCards = [];
+  let pokemonCards = [];
 
   let pokemonsData = { pokemons: [] };
 
@@ -99,7 +99,7 @@
           console.error("Erreur lors de la récupération des types du Pokémon.");
         }
 
-        pokemonsCards = [...pokemonsCards, newPokemon];
+        pokemonCards = [...pokemonCards, newPokemon];
         const pokemonDataFormatted = {
           name: newPokemon.name,
           description: newPokemon.description,
@@ -122,7 +122,11 @@
     }
   });
 
+  let loading = false;
+  let dataLoaded = false;
+
   async function sendToHubSpot() {
+    loading = true;
     try {
       console.log(pokemonsData);
       // L'url est celle de ma fonction cloud
@@ -141,6 +145,7 @@
         const result = await response.json();
         console.log("Succès :", result);
         // Gérer le succès (peut-être afficher un message à l'utilisateur)
+        dataLoaded = true;
       } else {
         console.error("Erreur lors de l'envoi à HubSpot");
         // Gérer l'erreur
@@ -148,8 +153,12 @@
     } catch (error) {
       console.error("Erreur lors de l'envoi des données :", error);
       // Gérer l'exception
+    } finally {
+      loading = false;
     }
   }
+
+  let isHovered = false;
 </script>
 
 <main>
@@ -170,7 +179,23 @@
     <div class="rectangle-3-patch-1"></div>
     <div class="rectangle-3">
       <button class="send-button" on:click={sendToHubSpot}
-        >Send to Hubspot</button
+      on:mouseover={() => isHovered = true}
+      on:mouseout={() => isHovered = false}
+      on:focus={() => isHovered = true}
+      on:blur={() => isHovered = false}>
+        {#if loading}
+          <div class="loader"></div>
+        {:else}
+          {#if dataLoaded}
+            {#if isHovered}
+              Send again ?
+            {:else}
+              Data loaded ✔️
+            {/if}
+          {:else}
+            Send to Hubspot
+          {/if}
+        {/if}</button
       >
     </div>
     <div class="rectangle-3-patch-2"></div>
@@ -178,7 +203,7 @@
 
   <div class="body-content">
     <div class="grid-container">
-      {#each pokemonsCards as pokemon}
+      {#each pokemonCards as pokemon}
         <PokemonCard {pokemon} />
       {/each}
     </div>
@@ -186,6 +211,24 @@
 </main>
 
 <style>
+  .loader {
+    border: 4px solid #f3f3f3; /* Couleur de fond */
+    border-top: 4px solid #3a84d1; /* Couleur de la bordure */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .pokedex-title {
     font-family: "Rowdies", sans-serif;
     font-weight: 400;
@@ -193,6 +236,15 @@
     color: white;
     text-align: center;
     margin-left: 15px;
+    transition: transform 0.1s ease;
+  }
+
+  .pokedex-logo {
+    transition: transform 0.1s ease;
+  }
+
+  .pokedex-logo:hover {
+    transform: scale(1.3);
   }
 
   .grid-container {
@@ -212,19 +264,26 @@
   }
 
   .send-button {
-    background-color: #EC767D; /* Green */
+    background-color: #ec767d;
     position: sticky;
     font-family: "Rowdies", sans-serif;
     font-weight: 400;
     font-size: 25px;
     color: white;
     border-radius: 45px;
-    border: 3px solid white; /* Green */
+    border: 3px solid white;
     padding: 15px 32px;
+    transition: transform 0.1s ease;
   }
 
   .send-button:hover {
     cursor: pointer;
+    transform: scale(1.05);
+  }
+
+  .send-button:active {
+    background-color: #cb575d;
+    transform: translateY(4px);
   }
 
   .body-content {
