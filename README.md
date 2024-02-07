@@ -1,0 +1,1 @@
+In order to run this app locally, open a terminal, go to ../pokedex-challenge and run npm run dev.

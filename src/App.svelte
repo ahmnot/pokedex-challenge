@@ -128,7 +128,6 @@
   async function sendToHubSpot() {
     loading = true;
     try {
-      console.log(pokemonsData);
       // L'url est celle de ma fonction cloud
       const response = await fetch(
         "https://europe-west9-pokedex-challenge-413609.cloudfunctions.net/function-send-pokedata-to-hubspot",
