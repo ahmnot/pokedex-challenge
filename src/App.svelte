@@ -20,8 +20,8 @@
   //   },
   // };
 
-  let pokemonCards = [];
-  let pokemonsData = { pokemons: [] };
+  let pokemonCardsShown = [];
+  let pokemonsDataSent = { pokemons: [] };
   let loading = false;
   let dataLoaded = false;
   let isHovered = false;
@@ -53,7 +53,7 @@
       (n) => n.language.name === "fr",
     ).name;
 
-    const pokemonDataFormatted = {
+    const pokemonDataForSending = {
       name: name,
       description: description,
       size: pokemon.height / 10,
@@ -65,9 +65,9 @@
       },
     };
 
-    pokemonsData.pokemons.push(pokemonDataFormatted);
+    pokemonsDataSent.pokemons.push(pokemonDataForSending);
 
-    return {
+    const pokemonDataShown = {
       name: name,
       image: pokemon.sprites.other.dream_world.front_default,
       description: description,
@@ -81,6 +81,7 @@
         icon: `./pokemon-icons/${pokemonType.toLowerCase()}-icon.png`,
       },
     };
+    pokemonCardsShown = [...pokemonCardsShown, pokemonDataShown];
   }
 
   onMount(async () => {
@@ -92,10 +93,10 @@
         ),
       );
       const pokemons = await Promise.all(pokemonPromises);
-      const detailedPokemonPromises = pokemons.map((pokemon) =>
-        fetchPokemonDetails(pokemon),
-      );
-      pokemonCards = await Promise.all(detailedPokemonPromises);
+
+      pokemons.forEach((pokemon) => {
+        fetchPokemonDetails(pokemon);
+      });
     } catch (error) {
       console.error(
         "Erreur lors du chargement des données des Pokémon:",
@@ -116,7 +117,7 @@
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(pokemonsData),
+          body: JSON.stringify(pokemonsDataSent),
         },
       );
 
@@ -159,17 +160,12 @@
         on:mouseout={() => (isHovered = false)}
         on:focus={() => (isHovered = true)}
         on:blur={() => (isHovered = false)}
-        
       >
         {#if loading}
           <div class="loader"></div>
         {:else}
           {#if dataLoaded}
-            {#if isHovered}
-              Send again ?
-            {:else}
-              Data loaded ✔️
-            {/if}
+            Data loaded ✔️
           {:else}
             Send to Hubspot
           {/if}
@@ -181,15 +177,14 @@
 
   <div class="body-content">
     <div class="grid-container">
-      {#each pokemonCards as pokemon}
-          <PokemonCard {pokemon} />
+      {#each pokemonCardsShown as pokemon}
+        <PokemonCard {pokemon} />
       {/each}
     </div>
   </div>
 </main>
 
 <style>
-
   .loader {
     border: 4px solid #f3f3f3; /* Couleur de fond */
     border-top: 4px solid #3a84d1; /* Couleur de la bordure */
@@ -375,5 +370,59 @@
       #cb575d 10px
     );
     z-index: 0;
+  }
+
+  @media (max-width: 1570px) {
+    .grid-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Styles pour la bannière */
+    .banner {
+      width: 1100px;
+      transform: translateX(-50%);
+    }
+
+    .rectangle-3 {
+      left: 740px;
+    }
+
+    .rectangle-3-patch-1 {
+      left: 730px;
+    }
+
+    .rectangle-3-patch-2 {
+      left: 1054px;
+    }
+  }
+
+  @media (max-width: 1150px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Styles pour la bannière */
+    .banner {
+      width: 900px;
+      transform: translateX(-50%);
+    }
+
+    .rectangle-3 {
+      left: 540px;
+    }
+
+    .rectangle-3-patch-1 {
+      left: 530px;
+    }
+
+    .rectangle-3-patch-2 {
+      left: 854px;
+    }
+  }
+
+  @media (max-width: 750px) {
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
