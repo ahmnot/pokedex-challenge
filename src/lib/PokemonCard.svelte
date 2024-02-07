@@ -283,4 +283,12 @@
         width: 18px;
         height: 18px;
     }
+
+    @media (max-width: 720px) {
+        .pokemon-card:hover {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+    }
+
 </style>

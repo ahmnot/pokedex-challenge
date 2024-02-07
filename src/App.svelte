@@ -276,6 +276,8 @@
     background: #cb575d;
     border-radius: 18px;
     z-index: 4;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   /* Styles pour les rectangles supplémentaires */
@@ -400,32 +402,43 @@
   }
 
   /* Taille moyenne */
-  @media (max-width: 1150px) {
+  @media (max-width: 1120px) {
     .grid-container {
       grid-template-columns: repeat(2, 1fr);
     }
 
     /* Styles pour la bannière */
     .banner {
-      width: 900px;
+      width: 800px;
       transform: translateX(-50%);
     }
 
+    .rectangle-2 {
+      left: 15px;
+    }
+
     .rectangle-3 {
-      left: 540px;
+      left: 470px;
     }
 
     .rectangle-3-patch-1 {
-      left: 530px;
+      left: 480px;
     }
 
     .rectangle-3-patch-2 {
-      left: 854px;
+      left: 784px;
+    }
+
+    .rectangle-2-patch-1,
+    .rectangle-2-patch-2,
+    .rectangle-3-patch-1,
+    .rectangle-3-patch-2 {
+      display: none;
     }
   }
 
   /* Taille petite */
-  @media (max-width: 720px) {
+  @media (max-width: 820px) {
     .grid-container {
       top: 150px;
       grid-template-columns: 1fr;
