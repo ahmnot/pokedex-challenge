@@ -72,7 +72,7 @@
           const genera = speciesData.genera
             .find((entry) => entry.language.name === "fr")
             .genus.replace("Pokémon ", "");
-            newPokemon.category = genera;
+          newPokemon.category = genera;
         }
 
         const responseAbility = await fetch(data.abilities[0].ability.url);
@@ -97,7 +97,7 @@
             "./pokemon-icons/" +
             pokemonTypeTranslated.toLowerCase() +
             "-icon.png";
-            newPokemon.type.color = typeToColorMap[newPokemon.type.label];
+          newPokemon.type.color = typeToColorMap[newPokemon.type.label];
         }
 
         pokemons = [...pokemons, newPokemon];
@@ -106,9 +106,37 @@
       }
     }
   });
+
+  async function sendToHubSpot() {
+    const pokemonsData = {}; // Récupérez les données des Pokémon que vous souhaitez envoyer
+
+    try {
+      const response = await fetch("URL_DE_VOTRE_FONCTION_CLOUD", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pokemonsData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Succès :", result);
+        // Gérer le succès (peut-être afficher un message à l'utilisateur)
+      } else {
+        console.error("Erreur lors de l'envoi à HubSpot");
+        // Gérer l'erreur
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'envoi des données :", error);
+      // Gérer l'exception
+    }
+  }
 </script>
 
 <main>
+  <button on:click={sendToHubSpot}>Send to HubSpot</button>
+
   <div class="grid-container">
     {#each pokemons as pokemon}
       <PokemonCard {pokemon} />
