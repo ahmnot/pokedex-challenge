@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { blur, fade, fly, slide } from "svelte/transition";
   import PokemonCard from "./lib/PokemonCard.svelte";
 
   // Exemple d'objet Pokémon
@@ -20,8 +21,10 @@
   // };
 
   let pokemonCards = [];
-
   let pokemonsData = { pokemons: [] };
+  let loading = false;
+  let dataLoaded = false;
+  let isHovered = false;
 
   const typeToColorMap = {
     Plante: "#19CC20", // Vert
@@ -30,105 +33,82 @@
     Insecte: "#CAE03F", // Vert olive
   };
 
+  async function fetchPokemonDetails(pokemon) {
+    const speciesResponse = await fetch(pokemon.species.url);
+    const speciesData = await speciesResponse.json();
+    const abilityResponse = await fetch(pokemon.abilities[0].ability.url);
+    const abilityData = await abilityResponse.json();
+    const typeResponse = await fetch(pokemon.types[0].type.url);
+    const typeData = await typeResponse.json();
+
+    const name = speciesData.names.find((n) => n.language.name === "fr").name;
+    const description = speciesData.flavor_text_entries.find(
+      (e) => e.language.name === "fr",
+    ).flavor_text;
+    const category = speciesData.genera
+      .find((g) => g.language.name === "fr")
+      .genus.replace("Pokémon ", "");
+    const talent = abilityData.names.find((n) => n.language.name === "fr").name;
+    const pokemonType = typeData.names.find(
+      (n) => n.language.name === "fr",
+    ).name;
+
+    const pokemonDataFormatted = {
+      name: name,
+      description: description,
+      size: pokemon.height / 10,
+      category: category,
+      weight: pokemon.weight / 10,
+      talent: talent,
+      type: {
+        label: pokemonType,
+      },
+    };
+
+    pokemonsData.pokemons.push(pokemonDataFormatted);
+
+    return {
+      name: name,
+      image: pokemon.sprites.other.dream_world.front_default,
+      description: description,
+      size: `${(pokemon.height / 10).toString().replace(".", ",")} m`,
+      category: category,
+      weight: `${(pokemon.weight / 10).toString().replace(".", ",")} kg`,
+      talent: talent,
+      type: {
+        label: pokemonType,
+        color: typeToColorMap[pokemonType] || "#FFFFFF",
+        icon: `./pokemon-icons/${pokemonType.toLowerCase()}-icon.png`,
+      },
+    };
+  }
+
   onMount(async () => {
-    for (let pokemonId = 1; pokemonId <= 12; pokemonId++) {
-      // Charge les 12 premiers Pokémon
-
-      const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonId}`,
+    loading = true;
+    try {
+      const pokemonPromises = Array.from({ length: 12 }, (_, index) =>
+        fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`).then((res) =>
+          res.json(),
+        ),
       );
-
-      if (response.ok) {
-        const data = await response.json();
-        let newPokemon = {
-          name: data.name,
-          image: data.sprites.other.dream_world.front_default,
-          description: "?", // Rempli plus bas
-          size: `${(data.height / 10).toString().replace(".", ",")} m`, // Convertit de décimètres en mètres
-          category: "?", // Rempli plus bas
-          weight: `${(data.weight / 10).toString().replace(".", ",")} kg`, // Convertit de hectogrammes en kilogrammes
-          talent: data.abilities[0].ability.name, // Traduit plus bas
-          type: {
-            label: data.types[0].type.name,
-            color: "#FFFFFF", // Couleur remplie plus bas
-            icon: "?", // Rempli plus bas
-          },
-        };
-
-        const responseSpecies = await fetch(data.species.url);
-
-        if (responseSpecies.ok) {
-          const speciesData = await responseSpecies.json();
-
-          newPokemon.name = speciesData.names.find(
-            (entry) => entry.language.name === "fr",
-          ).name;
-
-          newPokemon.description = speciesData.flavor_text_entries.find(
-            (entry) => entry.language.name === "fr",
-          ).flavor_text;
-
-          newPokemon.category = speciesData.genera
-            .find((entry) => entry.language.name === "fr")
-            .genus.replace("Pokémon ", "");
-        }
-
-        const responseAbility = await fetch(data.abilities[0].ability.url);
-        if (responseAbility.ok) {
-          newPokemon.talent = (await responseAbility.json()).names.find(
-            (entry) => entry.language.name === "fr",
-          ).name;
-        } else {
-          console.error(
-            "Erreur lors de la récupération des talents du Pokémon.",
-          );
-        }
-
-        const responsePokemonType = await fetch(data.types[0].type.url);
-        if (responsePokemonType.ok) {
-          const pokemonTypeTranslated = (
-            await responsePokemonType.json()
-          ).names.find((entry) => entry.language.name === "fr").name;
-          newPokemon.type.label = pokemonTypeTranslated;
-          newPokemon.type.icon =
-            "./pokemon-icons/" +
-            pokemonTypeTranslated.toLowerCase() +
-            "-icon.png";
-          newPokemon.type.color = typeToColorMap[newPokemon.type.label];
-        } else {
-          console.error("Erreur lors de la récupération des types du Pokémon.");
-        }
-
-        pokemonCards = [...pokemonCards, newPokemon];
-        const pokemonDataFormatted = {
-          name: newPokemon.name,
-          description: newPokemon.description,
-          size: data.height / 10,
-          category: newPokemon.category,
-          weight: data.weight / 10,
-          talent: newPokemon.talent,
-          type: {
-            label: newPokemon.type.label,
-          },
-        };
-
-        pokemonsData.pokemons = [
-          ...pokemonsData.pokemons,
-          pokemonDataFormatted,
-        ];
-      } else {
-        console.error("Erreur lors de la récupération des données du Pokémon.");
-      }
+      const pokemons = await Promise.all(pokemonPromises);
+      const detailedPokemonPromises = pokemons.map((pokemon) =>
+        fetchPokemonDetails(pokemon),
+      );
+      pokemonCards = await Promise.all(detailedPokemonPromises);
+    } catch (error) {
+      console.error(
+        "Erreur lors du chargement des données des Pokémon:",
+        error,
+      );
+    } finally {
+      loading = false;
     }
   });
-
-  let loading = false;
-  let dataLoaded = false;
 
   async function sendToHubSpot() {
     loading = true;
     try {
-      // L'url est celle de ma fonction cloud
       const response = await fetch(
         "https://europe-west9-pokedex-challenge-413609.cloudfunctions.net/function-send-pokedata-to-hubspot",
         {
@@ -143,24 +123,19 @@
       if (response.ok) {
         const result = await response.json();
         console.log("Succès :", result);
-        // Gérer le succès (peut-être afficher un message à l'utilisateur)
         dataLoaded = true;
       } else {
         console.error("Erreur lors de l'envoi à HubSpot");
-        // Gérer l'erreur
       }
     } catch (error) {
       console.error("Erreur lors de l'envoi des données :", error);
-      // Gérer l'exception
     } finally {
       loading = false;
     }
   }
-
-  let isHovered = false;
 </script>
 
-<main>
+<main class="main-container">
   <div class="banner">
     <div class="base-rectangle"></div>
     <div class="rectangle-2-patch-1"></div>
@@ -177,11 +152,15 @@
     <div class="rectangle-2-patch-2"></div>
     <div class="rectangle-3-patch-1"></div>
     <div class="rectangle-3">
-      <button class="send-button" on:click={sendToHubSpot}
-      on:mouseover={() => isHovered = true}
-      on:mouseout={() => isHovered = false}
-      on:focus={() => isHovered = true}
-      on:blur={() => isHovered = false}>
+      <button
+        class="send-button"
+        on:click={sendToHubSpot}
+        on:mouseover={() => (isHovered = true)}
+        on:mouseout={() => (isHovered = false)}
+        on:focus={() => (isHovered = true)}
+        on:blur={() => (isHovered = false)}
+        
+      >
         {#if loading}
           <div class="loader"></div>
         {:else}
@@ -203,13 +182,14 @@
   <div class="body-content">
     <div class="grid-container">
       {#each pokemonCards as pokemon}
-        <PokemonCard {pokemon} />
+          <PokemonCard {pokemon} />
       {/each}
     </div>
   </div>
 </main>
 
 <style>
+
   .loader {
     border: 4px solid #f3f3f3; /* Couleur de fond */
     border-top: 4px solid #3a84d1; /* Couleur de la bordure */

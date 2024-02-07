@@ -1,6 +1,8 @@
 <script>
     import { onMount } from "svelte";
+    import { fade, fly, slide} from "svelte/transition";
     import { FastAverageColor } from "fast-average-color";
+    import { backOut } from "svelte/easing";
 
     export let pokemon;
 
@@ -50,6 +52,11 @@
     role="button"
     aria-pressed={selected}
     class:selected
+    in:fly={{
+      y: 80,
+      delay: 100,
+      easing: backOut
+    }}
 >
     <div
         class="pokemon-image-container"
@@ -63,7 +70,8 @@
             class="pokemon-image"
         />
     </div>
-    <div class="pokemon-info">
+    <div class="pokemon-info" 
+    transition:fade={{ duration: 200 }}>
         <h2 class="pokemon-name">{pokemon.name}</h2>
         <p class="pokemon-description">{pokemon.description}</p>
         <hr class="pokemon-card-hr" />
@@ -121,7 +129,7 @@
             transform 0.2s ease,
             z-index 0s;
         cursor: pointer;
-        z-index: 1;
+        z-index: 1; /* Valeur de base pour s'assurer que les cartes ont un z-index explicite */
     }
 
     .pokemon-card:hover {
