@@ -1,26 +1,28 @@
-// Ce code est le code de la fonction Google Cloud. Il n'est pas destiné à être exécuté ailleurs que sur un serveur. 
+// Ce code est le code de la fonction Google Cloud. 
+// Il n'est pas destiné à être exécuté ailleurs que sur un serveur. 
+// Ne pas oublier d'ajouter les dépendances.
 
 const functions = require('@google-cloud/functions-framework');
 const { Client } = require('@hubspot/api-client');
 const cors = require('cors');
 
-// Utilisez cors pour permettre toutes les origines ou configurez selon vos besoins
+// cors permet toutes les origines.
 const corsHandler = cors({ origin: true });
 
 functions.http('sendToHubSpot', (req, res) => {
 
     corsHandler(req, res, () => {
-        // Vérifiez si la requête est une requête pré-vol OPTIONS
+        // Vérifie si la requête est une requête pré-vol OPTIONS.
         if (req.method === 'OPTIONS') {
-            // Pré-vol terminé, pas besoin de traiter davantage
+            // Pré-vol terminé, pas besoin de traiter davantage.
             res.status(204).send('');
             return;
         }
 
-        // Configuration du client HubSpot avec le token d'authentification de l'app privée. À REMPLACER.
+        // Configuration du client HubSpot avec le token d'authentification de l'app privée. À REMPLACER QUAND DEPLOYE.
         const hubspotClient = new Client({ accessToken: '***' });
 
-        // La requête POST doit contenir un tableau de Pokémons
+        // La requête POST doit contenir un tableau de Pokémons.
         const pokemons = req.body.pokemons;
 
         if (!pokemons) {
@@ -28,7 +30,7 @@ functions.http('sendToHubSpot', (req, res) => {
             return;
         }
 
-        // Les données Pokémon mappées à celles des propriétés personnalisées des contacts Hubspot
+        // Les données Pokémon mappées à celles des propriétés personnalisées des contacts Hubspot.
         const contacts = pokemons.map(pokemon => {
             return {
                 properties: {
@@ -43,22 +45,22 @@ functions.http('sendToHubSpot', (req, res) => {
             };
         });
 
-        // Envoi de chaque "contact" à HubSpot
-        try {
-            for (const contact of contacts) {
-                const createContactResponse = hubspotClient.crm.contacts.basicApi.create(contact).then((results) => {
-                    console.log(results)
-                })
-                    .catch((err) => {
-                        console.error(err);
-                    });
-                console.log(createContactResponse);
+        // Promise.allSettled() sert pour traiter toutes les promesses en parallèle. 
+        // C'est seulement après qu'il vérifie si des erreurs se sont produites 
+        // pendant les opérations asynchrones 
+        // et qu'il gère les erreurs en conséquence
+        Promise.allSettled(contacts.map(contact =>
+            hubspotClient.crm.contacts.basicApi.create(contact)
+        )).then(results => {
+            const errors = results.filter(result => result.status === 'rejected');
+            if (errors.length > 0) {
+                console.error("Erreurs lors de l'envoi à HubSpot :", errors);
+                res.status(500).send('Erreur lors de la communication avec HubSpot.');
+            } else {
+                console.log('Tous les Pokémons ont été envoyés à HubSpot avec succès.');
+                res.status(200).send(JSON.stringify({ message: 'Tous les Pokémons ont été envoyés à HubSpot avec succès.' }));
             }
-            res.status(200).send('Tous les Pokémons ont été envoyés à HubSpot avec succès.');
-        } catch (error) {
-            console.error("Erreur lors de l'envoi à HubSpot :", error.message);
-            res.status(500).send('Erreur lors de la communication avec HubSpot.');
-        }
+        });
     });
 
 });

@@ -141,7 +141,7 @@
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Succès :", result);
+        console.log("Succès :", result.message);
         dataLoaded = true;
       } else {
         console.error("Erreur lors de l'envoi à HubSpot");
