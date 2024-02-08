@@ -54,6 +54,7 @@
     const typeResponse = await fetch(pokemon.types[0].type.url);
     const typeData = await typeResponse.json();
 
+    // Formattage, différent entre données affichées et envoyées
     const name = speciesData.names.find((n) => n.language.name === "fr").name;
     const description = speciesData.flavor_text_entries.find(
       (e) => e.language.name === "fr",
@@ -101,6 +102,7 @@
   onMount(async () => {
     loading = true;
     try {
+      // On boucle sur les Pokémons par Promise, ce qui permet de les charger en parallèle
       const pokemonPromises = Array.from({ length: nbrePokemons }, (_, index) =>
         fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`).then(
           (response) => response.json(),
