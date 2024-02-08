@@ -1,4 +1,4 @@
-// Ce code est le code de la fonction Google Cloud.
+// Ce code est le code de la fonction Google Cloud. Il n'est pas destiné à être exécuté ailleurs que sur un serveur. 
 
 const functions = require('@google-cloud/functions-framework');
 const { Client } = require('@hubspot/api-client');
@@ -17,7 +17,7 @@ functions.http('sendToHubSpot', (req, res) => {
             return;
         }
 
-        // Configuration du client HubSpot avec le token d'authentification de l'app privée. À remplacer.
+        // Configuration du client HubSpot avec le token d'authentification de l'app privée. À REMPLACER.
         const hubspotClient = new Client({ accessToken: '***' });
 
         // La requête POST doit contenir un tableau de Pokémons

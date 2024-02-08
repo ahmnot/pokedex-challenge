@@ -1,6 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import { blur, fade, fly, slide } from "svelte/transition";
   import PokemonCard from "./lib/PokemonCard.svelte";
 
   // Exemple d'objet Pokémon
@@ -22,12 +21,19 @@
 
   let nbrePokemons = 12;
 
+  /** Les données des cartes formatées pour l'affichage.*/
   let pokemonCardsShown = [];
+
+  /** Les données des cartes formatées pour l'enregistrement dans Hubspot. */
   let pokemonsDataSent = { pokemons: [] };
+
   let loading = false;
   let dataLoaded = false;
-  let isHovered = false;
-  let notAllowed = true;
+
+  let isButtonHovered = false;
+
+  /** Sert pour le build public (pour éviter de me faire spammer) */
+  let notAllowed = false;
 
   const typeToColorMap = {
     Plante: "#19CC20", // Vert
@@ -36,6 +42,10 @@
     Insecte: "#CAE03F", // Vert olive
   };
 
+  /**
+   * Sert à récupérer des données de traduction ou autres, et à remplir les données affichées et envoyées.
+   * @param pokemon
+   */
   async function fetchPokemonDetails(pokemon) {
     const speciesResponse = await fetch(pokemon.species.url);
     const speciesData = await speciesResponse.json();
@@ -84,6 +94,7 @@
         icon: `./pokemon-icons/${pokemonType.toLowerCase()}-icon.png`,
       },
     };
+
     pokemonCardsShown = [...pokemonCardsShown, pokemonDataShown];
   }
 
@@ -91,10 +102,11 @@
     loading = true;
     try {
       const pokemonPromises = Array.from({ length: nbrePokemons }, (_, index) =>
-        fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`).then((res) =>
-          res.json(),
+        fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`).then(
+          (response) => response.json(),
         ),
       );
+
       const pokemons = await Promise.all(pokemonPromises);
 
       pokemons.forEach((pokemon) => {
@@ -113,13 +125,17 @@
   async function sendToHubSpot() {
     loading = true;
     try {
-      const response = await fetch("", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      // ICI est le lien d'appel à la Google Cloud Function.
+      const response = await fetch(
+        "https://europe-west9-pokedex-challenge-413609.cloudfunctions.net/function-send-pokedata-to-hubspot",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(pokemonsDataSent),
         },
-        body: JSON.stringify(pokemonsDataSent),
-      });
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -156,16 +172,16 @@
       <button
         class="send-button"
         on:click={sendToHubSpot}
-        on:mouseover={() => (isHovered = true)}
-        on:mouseout={() => (isHovered = false)}
-        on:focus={() => (isHovered = true)}
-        on:blur={() => (isHovered = false)}
+        on:mouseover={() => (isButtonHovered = true)}
+        on:mouseout={() => (isButtonHovered = false)}
+        on:focus={() => (isButtonHovered = true)}
+        on:blur={() => (isButtonHovered = false)}
       >
         {#if loading}
           <div class="loader"></div>
         {:else}
           {#if dataLoaded}
-            Data loaded ✔️
+            Data sent ✔️
           {:else if notAllowed}
             Not allowed! ❌
           {:else}
@@ -187,30 +203,7 @@
 </main>
 
 <style>
-  .loader {
-    border: 4px solid #f3f3f3; /* Couleur de fond */
-    border-top: 4px solid #3a84d1; /* Couleur de la bordure */
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 2s linear infinite;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Crée une grille avec 4 colonnes */
-  }
-
-  /* Styles pour la bannière */
+  /* Conteneur de la banner. */
   .banner {
     position: absolute;
     width: 1440px;
@@ -221,53 +214,7 @@
     transform: translateX(-46.5%);
   }
 
-  .send-button {
-    background-color: #ec767d;
-    position: sticky;
-    font-family: "Rowdies", sans-serif;
-    font-weight: 400;
-    font-size: 25px;
-    color: white;
-    border-radius: 45px;
-    border: 3px solid white;
-    padding: 15px 32px;
-    transition: transform 0.1s ease;
-  }
-
-  .send-button:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-  }
-
-  .send-button:active {
-    background-color: #cb575d;
-    transform: translateY(4px);
-  }
-
-  .body-content {
-    padding-top: 120px;
-    left: 50%;
-  }
-
-  .pokedex-title {
-    font-family: "Rowdies", sans-serif;
-    font-weight: 400;
-    font-size: 42px;
-    color: white;
-    text-align: center;
-    margin-left: 15px;
-    transition: transform 0.1s ease;
-  }
-
-  .pokedex-logo {
-    transition: transform 0.1s ease;
-  }
-
-  .pokedex-logo:hover {
-    transform: scale(1.3);
-  }
-
-  /* Styles pour le rectangle de base */
+  /* Rectangle principal de la banner. */
   .base-rectangle {
     position: absolute;
     width: 100%;
@@ -280,7 +227,24 @@
     transform: translateX(-50%);
   }
 
-  /* Styles pour les rectangles supplémentaires */
+  /* Rectangle de gauche. */
+  .rectangle-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 430px;
+    left: 45px;
+  }
+
+  /* Rectangle de droite. */
+  .rectangle-3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 315px;
+    left: 1080px;
+  }
+
   .rectangle-2,
   .rectangle-3 {
     position: absolute;
@@ -290,23 +254,7 @@
     z-index: 4;
   }
 
-  .rectangle-2 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 430px;
-    left: 45px;
-  }
-
-  .rectangle-3 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 315px;
-    left: 1080px;
-  }
-
-  /* Sert pour la fusion des rectangles */
+  /* Les petits coins de la fusion des rectangles. */
   .rectangle-2-patch-1 {
     position: absolute;
     height: 10px;
@@ -358,7 +306,6 @@
     z-index: 0;
   }
 
-  /* Sert pour la fusion des rectangles */
   .rectangle-3-patch-2 {
     position: absolute;
     height: 10px;
@@ -375,6 +322,80 @@
     );
     z-index: 0;
   }
+
+  .pokedex-logo {
+    transition: transform 0.1s ease;
+  }
+
+  .pokedex-logo:hover {
+    transform: scale(1.3);
+  }
+
+  /* Le gros titre. */
+  .pokedex-title {
+    font-family: "Rowdies", sans-serif;
+    font-weight: 400;
+    font-size: 42px;
+    color: white;
+    text-align: center;
+    margin-left: 15px;
+  }
+
+  /* Bouton d'envoi. */
+  .send-button {
+    background-color: #ec767d;
+    position: sticky;
+    font-family: "Rowdies", sans-serif;
+    font-weight: 400;
+    font-size: 25px;
+    color: white;
+    border-radius: 45px;
+    border: 3px solid white;
+    padding: 15px 32px;
+    transition: transform 0.1s ease;
+  }
+
+  .send-button:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+  }
+
+  .send-button:active {
+    background-color: #cb575d;
+    transform: translateY(4px);
+  }
+
+  /* Le loader-spinner. */
+  .loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3a84d1; /* Couleur de la bordure */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Conteneur des cartes. */
+  .body-content {
+    padding-top: 120px;
+    left: 50%;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Grille de 4 colonnes. */
+  }
+
+  /** PARTIE RESPONSIVENESS */
 
   /* Taille moyenne-grande */
   @media (max-width: 1570px) {

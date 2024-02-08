@@ -1,15 +1,18 @@
 <script>
     import { onMount } from "svelte";
-    import { fade, fly, slide} from "svelte/transition";
+    import { fade, fly, slide } from "svelte/transition";
     import { FastAverageColor } from "fast-average-color";
     import { backOut } from "svelte/easing";
 
     export let pokemon;
 
-    let backgroundColor = "#98d6cb"; // Couleur de fond par défaut d'une image
+    // Couleur de fond par défaut d'une image.
+    let backgroundColor = "#98d6cb";
 
-    let selected = false; // État de sélection de la carte
+    // État de sélection de la carte.
+    let selected = false;
 
+    //
     let imageElement;
 
     function toggleSelection() {
@@ -17,16 +20,16 @@
     }
 
     function handleKeydown(event) {
-        // Active la sélection avec la touche Enter ou Espace
+        // Active la sélection avec la touche entrée ou espace.
         if (event.key === "Enter" || event.key === " ") {
             toggleSelection();
-            event.preventDefault(); // Empêche le défilement pour la touche Espace
+            event.preventDefault(); // Empêche le défilement pour la touche espace.
         }
     }
 
     onMount(() => {
         if (imageElement) {
-            // Sert à remplir le fond de la couleur moyenne de l'image
+            // Sert à remplir le fond par la couleur moyenne de l'image.
             imageElement.onload = () => {
                 const fac = new FastAverageColor();
                 fac.getColorAsync(imageElement, { algorithm: "simple" })
@@ -53,9 +56,9 @@
     aria-pressed={selected}
     class:selected
     in:fly={{
-      y: 80,
-      delay: 100,
-      easing: backOut
+        y: 80,
+        delay: 100,
+        easing: backOut,
     }}
 >
     <div
@@ -70,8 +73,7 @@
             class="pokemon-image"
         />
     </div>
-    <div class="pokemon-info" 
-    transition:fade={{ duration: 200 }}>
+    <div class="pokemon-info" transition:fade={{ duration: 300 }}>
         <h2 class="pokemon-name">{pokemon.name}</h2>
         <p class="pokemon-description">{pokemon.description}</p>
         <hr class="pokemon-card-hr" />
@@ -121,50 +123,20 @@
         width: 315px;
         height: 465px;
         background: #ffffff;
-        border: 1px solid rgba(25, 204, 32, 0.2);
+        border: 1px solid rgba(25, 204, 32, 0.2); /* Très léger bord vert foncé. */
         box-shadow: 4px 8px 25px rgba(52, 7, 11, 0.3);
         border-radius: 40px;
-        margin: 15px; /* Ajouté pour éviter le chevauchement des cartes */
+        margin: 15px;
         transition:
             transform 0.2s ease,
             z-index 0s;
         cursor: pointer;
-        z-index: 1; /* Valeur de base pour s'assurer que les cartes ont un z-index explicite */
+        z-index: 1; /* Valeur de base. */
     }
 
     .pokemon-card:hover {
-        transform: scale(1.3); /* Agrandit la carte lors du survol */
+        transform: scale(1.3); /* Agrandit la carte lors du survol. */
         z-index: 10;
-    }
-
-    @keyframes iridescentBorder {
-        0%,
-        100% {
-            outline-color: mediumpurple;
-            box-shadow: 0 0 15px mediumpurple;
-        }
-        20% {
-            outline-color: cadetblue;
-            box-shadow: 0 0 15px cadetblue;
-        }
-        40% {
-            outline-color: dodgerblue;
-            box-shadow: 0 0 15px dodgerblue;
-        }
-        60% {
-            outline-color: greenyellow;
-            box-shadow: 0 0 15px greenyellow;
-        }
-        80% {
-            outline-color: orange;
-            box-shadow: 0 0 15px orange;
-        }
-    }
-
-    .pokemon-card.selected {
-        animation: iridescentBorder 1s infinite ease-in-out;
-        outline: 2px solid; /* Nécessaire pour l'effet de bordure */
-        box-shadow: 0 0 15px pink;
     }
 
     .pokemon-image-container {
@@ -172,11 +144,10 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        /*padding: 10px 56px 10px 41px;*/
         gap: 10px;
         width: 255px;
         height: 138px;
-        background: #98d6cb;
+        background: #98d6cb; /* Couleur par défaut, remplacée à onMount. */
         border-radius: 20px;
     }
 
@@ -188,6 +159,7 @@
         background-repeat: no-repeat;
     }
 
+    /* Fine ligne séparatrice. */
     .pokemon-card-hr {
         height: 1px;
         width: 100%;
@@ -257,7 +229,6 @@
         flex-direction: column;
         justify-content: left;
         align-items: left;
-        /*padding: 10px 56px 10px 41px;*/
         width: 255px;
     }
 
@@ -267,15 +238,15 @@
         justify-content: center; /* Alignement horizontal au centre */
         padding: 5px;
         gap: 10px;
-        width: 50%; 
-        background: #19cc20;
+        width: 50%;
+        background: #19cc20; /* Couleur par défaut, remplacée au chargement du type. */
         border-radius: 40px;
         font-family: "Signika", sans-serif;
         font-weight: 400;
         font-size: 14px;
         line-height: 17px;
         color: rgba(0, 0, 0, 0.7);
-        box-sizing: border-box; 
+        box-sizing: border-box;
         margin: 0;
     }
 
@@ -284,6 +255,9 @@
         height: 18px;
     }
 
+    /** PARTIE RESPONSIVENESS */
+
+    /* Zoom un peu moins grand sur les plus petits appareils. */
     @media (max-width: 720px) {
         .pokemon-card:hover {
             transform: scale(1.15);
@@ -291,4 +265,34 @@
         }
     }
 
+    /* BONUS (au clic sur une carte) */
+    @keyframes iridescentBorder {
+        0%,
+        100% {
+            outline-color: mediumpurple;
+            box-shadow: 0 0 15px mediumpurple;
+        }
+        20% {
+            outline-color: cadetblue;
+            box-shadow: 0 0 15px cadetblue;
+        }
+        40% {
+            outline-color: dodgerblue;
+            box-shadow: 0 0 15px dodgerblue;
+        }
+        60% {
+            outline-color: greenyellow;
+            box-shadow: 0 0 15px greenyellow;
+        }
+        80% {
+            outline-color: orange;
+            box-shadow: 0 0 15px orange;
+        }
+    }
+
+    .pokemon-card.selected {
+        animation: iridescentBorder 1s infinite ease-in-out;
+        outline: 2px solid; /* Nécessaire pour l'effet de bordure. */
+        box-shadow: 0 0 15px pink;
+    }
 </style>
