@@ -171,6 +171,8 @@
     <div class="rectangle-3">
       <button
         class="send-button"
+        disabled={dataLoaded}
+        class:button-disabled={dataLoaded}
         on:click={sendToHubSpot}
         on:mouseover={() => (isButtonHovered = true)}
         on:mouseout={() => (isButtonHovered = false)}
@@ -181,7 +183,7 @@
           <div class="loader"></div>
         {:else}
           {#if dataLoaded}
-            Data sent ✔️
+            Data sent. ✔️
           {:else if notAllowed}
             Not allowed! ❌
           {:else}
@@ -363,6 +365,15 @@
   .send-button:active {
     background-color: #cb575d;
     transform: translateY(4px);
+  }
+
+  .button-disabled {
+    background-color: grey;
+  }
+
+  .button-disabled:active {
+    background-color: grey;
+    transform: translateY(0px);
   }
 
   /* Le loader-spinner. */
