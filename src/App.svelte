@@ -256,71 +256,71 @@
     z-index: 4;
   }
 
-  /* Les petits coins de la fusion des rectangles. */
+  /* Les petits coins qui font la fusion des rectangles. */
   .rectangle-2-patch-1 {
     position: absolute;
-    height: 10px;
-    width: 10px;
+    height: 20px;
+    width: 20px;
     background: #c2424a;
     border-radius: 0;
-    left: 35.5px;
+    left: 27.5px;
     top: 66px;
     background-image: radial-gradient(
-      at 0px 10px,
+      at 0px 20px,
       rgba(0, 0, 0, 0) 0,
-      rgba(0, 0, 0, 0) 10px,
-      #cb575d 10px
+      rgba(0, 0, 0, 0) 20px,
+      #cb575d 20px
     );
     z-index: 0;
   }
 
   .rectangle-2-patch-2 {
     position: absolute;
-    height: 10px;
-    width: 10px;
+    height: 20px;
+    width: 20px;
     background: #c2424a;
     border-radius: 0;
-    left: 475px;
+    left: 473px;
     top: 66px;
     background-image: radial-gradient(
-      at 10px 10px,
+      at 20px 20px,
       rgba(0, 0, 0, 0) 0,
-      rgba(0, 0, 0, 0) 10px,
-      #cb575d 10px
+      rgba(0, 0, 0, 0) 20px,
+      #cb575d 20px
     );
     z-index: 0;
   }
 
   .rectangle-3-patch-1 {
     position: absolute;
-    height: 10px;
-    width: 10px;
+    height: 20px;
+    width: 20px;
     background: #c2424a;
     border-radius: 0;
-    left: 1070px;
+    left: 1062px;
     top: 66px;
     background-image: radial-gradient(
-      at 0px 10px,
+      at 0px 20px,
       rgba(0, 0, 0, 0) 0,
-      rgba(0, 0, 0, 0) 10px,
-      #cb575d 10px
+      rgba(0, 0, 0, 0) 20px,
+      #cb575d 20px
     );
     z-index: 0;
   }
 
   .rectangle-3-patch-2 {
     position: absolute;
-    height: 10px;
-    width: 10px;
+    height: 20px;
+    width: 20px;
     background: #c2424a;
     border-radius: 0;
-    left: 1394px;
+    left: 1393px;
     top: 66px;
     background-image: radial-gradient(
-      at 10px 10px,
+      at 20px 20px,
       rgba(0, 0, 0, 0) 0,
-      rgba(0, 0, 0, 0) 10px,
-      #cb575d 10px
+      rgba(0, 0, 0, 0) 20px,
+      #cb575d 20px
     );
     z-index: 0;
   }
@@ -425,11 +425,11 @@
     }
 
     .rectangle-3-patch-1 {
-      left: 730px;
+      left: 723px;
     }
 
     .rectangle-3-patch-2 {
-      left: 1054px;
+      left: 1053px;
     }
   }
 
@@ -453,19 +453,41 @@
       left: 470px;
     }
 
+    .rectangle-2-patch-1 {
+      left: 1px;
+      top: 59px;
+      background-image: radial-gradient(
+        at 0px 30px,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0) 20px,
+        #cb575d 20px
+      );
+    }
+
+    .rectangle-2-patch-2 {
+      left: 442px;
+      top: 59px;
+      background-image: radial-gradient(
+        at 20px 30px,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0) 20px,
+        #cb575d 20px
+      );
+    }
+
     .rectangle-3-patch-1 {
-      left: 480px;
+      left: 452px;
     }
 
     .rectangle-3-patch-2 {
-      left: 784px;
-    }
-
-    .rectangle-2-patch-1,
-    .rectangle-2-patch-2,
-    .rectangle-3-patch-1,
-    .rectangle-3-patch-2 {
-      display: none;
+      left: 779px;
+      top: 60px;
+      background-image: radial-gradient(
+        at 20px 30px,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0) 20px,
+        #cb575d 20px
+      );
     }
   }
 
@@ -476,7 +498,6 @@
       grid-template-columns: 1fr;
     }
 
-    /* Styles pour la bannière */
     .banner {
       width: 0;
     }
@@ -497,10 +518,18 @@
       transform: translateX(-50%);
     }
 
-    .rectangle-2-patch-1,
-    .rectangle-2-patch-2,
-    .rectangle-3-patch-1,
+    .rectangle-3-patch-1 {
+      left: -175px;
+      top: 114px;
+    }
+
     .rectangle-3-patch-2 {
+      left: 155px;
+      top: 114px;
+    }
+
+    .rectangle-2-patch-1,
+    .rectangle-2-patch-2 {
       display: none;
     }
   }
