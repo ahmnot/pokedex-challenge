@@ -210,10 +210,10 @@
     position: absolute;
     width: 1440px;
     background: #cb575d;
-    box-shadow: 4px 8px 25px rgba(52, 7, 11, 0.3);
     top: 0;
     left: 50%;
     transform: translateX(-46.5%);
+    filter: drop-shadow(0 0 2rem rgba(52, 7, 11, 0.3));
   }
 
   /* Rectangle principal de la banner. */
@@ -261,14 +261,14 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: #c2424a;
+    background: rgba(0, 0, 0, 0.0);
     border-radius: 0;
     left: 27.5px;
     top: 66px;
     background-image: radial-gradient(
       at 0px 20px,
-      rgba(0, 0, 0, 0) 0,
-      rgba(0, 0, 0, 0) 20px,
+      rgba(0, 0, 0, 0.0) 0,
+      rgba(0, 0, 0, 0.0) 20px,
       #cb575d 20px
     );
     z-index: 0;
@@ -278,7 +278,7 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: #c2424a;
+    background: rgba(0, 0, 0, 0.0);
     border-radius: 0;
     left: 473px;
     top: 66px;
@@ -295,7 +295,7 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: #c2424a;
+    background: rgba(0, 0, 0, 0.0);
     border-radius: 0;
     left: 1062px;
     top: 66px;
@@ -312,7 +312,7 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: #c2424a;
+    background: rgba(0, 0, 0, 0.0);
     border-radius: 0;
     left: 1393px;
     top: 66px;
@@ -513,12 +513,11 @@
     }
 
     .rectangle-2 {
-      margin: 0; padding:0; 
+      margin: 0;
+      padding: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 355px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
     }
 
     .rectangle-3 {
@@ -531,7 +530,7 @@
     }
 
     .rectangle-3-patch-1 {
-      position:absolute;
+      position: absolute;
       left: 10.5px;
       top: 100px;
       background-image: radial-gradient(
@@ -543,7 +542,7 @@
     }
 
     .rectangle-3-patch-2 {
-      position:absolute;
+      position: absolute;
       border-radius: 0;
       left: 326px;
       top: 100px;
