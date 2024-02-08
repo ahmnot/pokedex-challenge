@@ -229,7 +229,7 @@
     transform: translateX(-50%);
   }
 
-  /* Rectangle de gauche. */
+  /* Rectangle de gauche, qui contient le titre. */
   .rectangle-2 {
     display: flex;
     justify-content: center;
@@ -238,7 +238,7 @@
     left: 45px;
   }
 
-  /* Rectangle de droite. */
+  /* Rectangle de droite, qui contient le bouton. */
   .rectangle-3 {
     display: flex;
     justify-content: center;
@@ -330,7 +330,7 @@
   }
 
   .pokedex-logo:hover {
-    transform: scale(1.3);
+    transform: scale(1.13);
   }
 
   /* Le gros titre. */
@@ -341,6 +341,11 @@
     color: white;
     text-align: center;
     margin-left: 15px;
+    transition: transform 0.1s;
+  }
+
+  .pokedex-title:hover {
+    transform: scale(1.05);
   }
 
   /* Bouton d'envoi. */
@@ -499,7 +504,7 @@
     }
 
     .banner {
-      width: 0;
+      width: 355px;
     }
 
     .body-content {
@@ -508,24 +513,47 @@
     }
 
     .rectangle-2 {
+      margin: 0; padding:0; 
       left: 50%;
       transform: translateX(-50%);
+      width: 355px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
     }
 
     .rectangle-3 {
       top: 85px;
+      width: 300px;
       left: 50%;
       transform: translateX(-50%);
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
     }
 
     .rectangle-3-patch-1 {
-      left: -175px;
-      top: 114px;
+      position:absolute;
+      left: 10.5px;
+      top: 100px;
+      background-image: radial-gradient(
+        at 0px 30px,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0) 20px,
+        #cb575d 20px
+      );
     }
 
     .rectangle-3-patch-2 {
-      left: 155px;
-      top: 114px;
+      position:absolute;
+      border-radius: 0;
+      left: 326px;
+      top: 100px;
+      background-image: radial-gradient(
+        at 20px 30px,
+        rgba(0, 0, 0, 0) 0,
+        rgba(0, 0, 0, 0) 20px,
+        #cb575d 20px
+      );
+      z-index: 0;
     }
 
     .rectangle-2-patch-1,
