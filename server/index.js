@@ -6,8 +6,11 @@ const functions = require('@google-cloud/functions-framework');
 const { Client } = require('@hubspot/api-client');
 const cors = require('cors');
 
-// cors permet toutes les origines.
+// cors permet toutes les origines là, mais à changer par le nom du site sur lequel je déploie ensuite.
 const corsHandler = cors({ origin: true });
+//{
+//    origin: ['https://www.votre-site-web.com', 'https://staging.votre-site-web.com'],
+//}
 
 functions.http('sendToHubSpot', (req, res) => {
 
@@ -19,14 +22,15 @@ functions.http('sendToHubSpot', (req, res) => {
             return;
         }
 
-        // Configuration du client HubSpot avec le token d'authentification de l'app privée. À REMPLACER QUAND DEPLOYE.
-        const hubspotClient = new Client({ accessToken: '***' });
+        // Configuration du client HubSpot avec le token d'authentification de l'app privée.
+        // Ne pas oublier de configurer la variable d'environnement dans le cloud
+        const hubspotClient = new Client({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN });
 
         // La requête POST doit contenir un tableau de Pokémons.
         const pokemons = req.body.pokemons;
 
-        if (!pokemons) {
-            res.status(400).send('Aucun Pokémon fourni dans la requête.');
+        if (!pokemons || !Array.isArray(pokemons)) {
+            res.status(400).send('Données de Pokémon invalides ou absentes.');
             return;
         }
 
