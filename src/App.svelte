@@ -82,6 +82,7 @@
     pokemonsDataSent.pokemons.push(pokemonDataForSending);
 
     const pokemonDataShown = {
+      id: pokemon.id,
       name: name,
       image: pokemon.sprites.other.dream_world.front_default,
       description: description,
@@ -111,9 +112,10 @@
 
       const pokemons = await Promise.all(pokemonPromises);
 
-      pokemons.forEach((pokemon) => {
-        fetchPokemonDetails(pokemon);
-      });
+      await Promise.all(pokemons.map((pokemon) => fetchPokemonDetails(pokemon)));
+
+      // Tri de pokemonCardsShown par l'ID du Pokémon pour les afficher dans l'ordre
+      pokemonCardsShown.sort((a, b) => a.id - b.id);
     } catch (error) {
       console.error(
         "Erreur lors du chargement des données des Pokémon:",
@@ -263,14 +265,14 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: rgba(0, 0, 0, 0.0);
+    background: rgba(0, 0, 0, 0);
     border-radius: 0;
     left: 27.5px;
     top: 66px;
     background-image: radial-gradient(
       at 0px 20px,
-      rgba(0, 0, 0, 0.0) 0,
-      rgba(0, 0, 0, 0.0) 20px,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) 20px,
       #cb575d 20px
     );
     z-index: 0;
@@ -280,7 +282,7 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: rgba(0, 0, 0, 0.0);
+    background: rgba(0, 0, 0, 0);
     border-radius: 0;
     left: 473px;
     top: 66px;
@@ -297,7 +299,7 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: rgba(0, 0, 0, 0.0);
+    background: rgba(0, 0, 0, 0);
     border-radius: 0;
     left: 1062px;
     top: 66px;
@@ -314,7 +316,7 @@
     position: absolute;
     height: 20px;
     width: 20px;
-    background: rgba(0, 0, 0, 0.0);
+    background: rgba(0, 0, 0, 0);
     border-radius: 0;
     left: 1393px;
     top: 66px;
@@ -329,6 +331,7 @@
 
   .pokedex-logo {
     transition: transform 0.1s ease;
+    will-change: transform;
   }
 
   .pokedex-logo:hover {
@@ -344,6 +347,7 @@
     text-align: center;
     margin-left: 15px;
     transition: transform 0.1s;
+    will-change: transform;
   }
 
   .pokedex-title:hover {
@@ -362,6 +366,7 @@
     border: 3px solid white;
     padding: 15px 32px;
     transition: transform 0.1s ease;
+    will-change: transform;
   }
 
   .send-button:hover {

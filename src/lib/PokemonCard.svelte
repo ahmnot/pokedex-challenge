@@ -12,7 +12,6 @@
     // État de sélection de la carte.
     let selected = false;
 
-    //
     let imageElement;
 
     function toggleSelection() {
@@ -132,6 +131,7 @@
             z-index 0s;
         cursor: pointer;
         z-index: 1; /* Valeur de base. */
+        will-change: transform;
     }
 
     .pokemon-card:hover {
@@ -260,7 +260,7 @@
     /* Zoom un peu moins grand sur les plus petits appareils. */
     @media (max-width: 720px) {
         .pokemon-card:hover {
-            transform: scale(1.15);
+            transform: scale(1.10);
             z-index: 10;
         }
     }
