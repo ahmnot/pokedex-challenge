@@ -1,6 +1,6 @@
 See: https://pokedex-challenge-othman.tiiny.site/
 
-This demo app was realized in 48 hours, to show my fullstack capacities in Svelte + Google Cloud Functions + Node.js.
+This demo app was realized in 48 hours, to show my capacities in Svelte + Google Cloud Functions + Node.js.
 
 It fetches data from the PokéAPI, displays it nicely and sends it to Hubspot using a call to a Google cloud function.
 
