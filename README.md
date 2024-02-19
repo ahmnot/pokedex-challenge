@@ -1,4 +1,4 @@
-This demo app is here to show my fullstack capacities in Svelte + Google Cloud Functions + Node.js.
+This demo app was realized in 48 hours, to show my fullstack capacities in Svelte + Google Cloud Functions + Node.js.
 
 To run this app locally:<br>
 - open a terminal
