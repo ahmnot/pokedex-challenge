@@ -1,6 +1,6 @@
 <script>
     import { onMount } from "svelte";
-    import { fade, fly, slide } from "svelte/transition";
+    import { fade, fly } from "svelte/transition";
     import { FastAverageColor } from "fast-average-color";
     import { backOut } from "svelte/easing";
 

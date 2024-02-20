@@ -14,7 +14,7 @@ const corsHandler = cors({ origin: true });
 
 functions.http('sendToHubSpot', (req, res) => {
 
-    corsHandler(req, res, () => {
+    corsHandler(req, res, async () => {
         // Vérifie si la requête est une requête pré-vol OPTIONS.
         if (req.method === 'OPTIONS') {
             // Pré-vol terminé, pas besoin de traiter davantage.
@@ -49,22 +49,16 @@ functions.http('sendToHubSpot', (req, res) => {
             };
         });
 
-        // Promise.allSettled() sert pour traiter toutes les promesses en parallèle. 
-        // C'est seulement après qu'il vérifie si des erreurs se sont produites 
-        // pendant les opérations asynchrones 
-        // et qu'il gère les erreurs en conséquence
-        Promise.allSettled(contacts.map(contact =>
-            hubspotClient.crm.contacts.basicApi.create(contact)
-        )).then(results => {
-            const errors = results.filter(result => result.status === 'rejected');
-            if (errors.length > 0) {
-                console.error("Erreurs lors de l'envoi à HubSpot :", errors);
-                res.status(500).send('Erreur lors de la communication avec HubSpot.');
-            } else {
-                console.log('Tous les Pokémons ont été envoyés à HubSpot avec succès.');
-                res.status(200).send(JSON.stringify({ message: 'Tous les Pokémons ont été envoyés à HubSpot avec succès.' }));
-            }
-        });
+        // Utilisation de l'API batch pour créer ou mettre à jour des contacts en lots.
+        try {
+            console.log(contacts);
+            await hubspotClient.crm.contacts.batchApi.create(contacts); 
+            console.log('Tous les Pokémons ont été envoyés à HubSpot avec succès.');
+            res.status(200).send(JSON.stringify({ message: 'Tous les Pokémons ont été envoyés à HubSpot avec succès.' }));
+        } catch (error) {
+            console.error("Erreurs lors de l'envoi à HubSpot :", error);
+            res.status(500).send('Erreur lors de la communication avec HubSpot.');
+        }
     });
 
 });

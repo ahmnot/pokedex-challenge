@@ -21,8 +21,10 @@
 
   let nbrePokemons = 12;
 
+
   /** Les données des cartes formatées pour l'affichage.*/
   let pokemonCardsShown = [];
+  let pokemonsLoaded = Array(nbrePokemons).fill(false);
 
   /** Les données des cartes formatées pour l'enregistrement dans Hubspot. */
   let pokemonsDataSent = { pokemons: [] };
@@ -99,8 +101,21 @@
       },
     };
 
-    pokemonCardsShown = [...pokemonCardsShown, pokemonDataShown];
+    pokemonsLoaded[pokemon.id - 1] = pokemonDataShown;
+
+    // Affichage des pokémons dans l'ordre
+    for (let i = 0; i < pokemonsLoaded.length; i++) {
+      if (pokemonsLoaded[i] === false) {
+        // Si un Pokémon dans la séquence (dans l'ordre donc) n'est pas encore chargé, arrêt de la vérification
+        break;
+      }
+      if (!pokemonCardsShown.some(p => p.id === pokemonsLoaded[i].id)) {
+        // Si le Pokémon est chargé mais pas encore affiché, ajout à l'affichage
+        pokemonCardsShown = [...pokemonCardsShown, pokemonsLoaded[i]];
+      }
+    }
   }
+
 
   onMount(async () => {
     loading = true;
@@ -114,10 +129,10 @@
 
       const pokemons = await Promise.all(pokemonPromises);
 
-      await Promise.all(pokemons.map((pokemon) => fetchPokemonDetails(pokemon)));
+      await Promise.all(
+        pokemons.map((pokemon) => fetchPokemonDetails(pokemon)),
+      );
 
-      // Tri de pokemonCardsShown par l'ID du Pokémon pour les afficher dans l'ordre
-      pokemonCardsShown.sort((a, b) => a.id - b.id);
     } catch (error) {
       isFetchingError = true;
       console.error(
@@ -208,9 +223,9 @@
 
   <div class="body-content">
     <div class="grid-container">
-      {#each pokemonCardsShown as pokemon}
-        <PokemonCard {pokemon} />
-      {/each}
+        {#each pokemonCardsShown as pokemon (pokemon.id)}
+          <PokemonCard {pokemon} />
+        {/each}
     </div>
   </div>
 </main>
