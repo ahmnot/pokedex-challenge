@@ -49,12 +49,13 @@ functions.http('sendToHubSpot', (req, res) => {
             };
         });
 
-        // Utilisation de l'API batch pour créer ou mettre à jour des contacts en lots.
         try {
-            console.log(contacts);
-            await hubspotClient.crm.contacts.batchApi.create(contacts); 
-            console.log('Tous les Pokémons ont été envoyés à HubSpot avec succès.');
-            res.status(200).send(JSON.stringify({ message: 'Tous les Pokémons ont été envoyés à HubSpot avec succès.' }));
+            const apiResponse = await hubspotClient.crm.contacts.batchApi.create({ inputs: contacts });
+            console.log('Réponse de l\'API HubSpot:', apiResponse);
+            res.status(200).send(JSON.stringify({ 
+                message: 'Les Pokémons ont été envoyés à HubSpot avec succès.',
+                details: apiResponse
+            }));
         } catch (error) {
             console.error("Erreurs lors de l'envoi à HubSpot :", error);
             res.status(500).send('Erreur lors de la communication avec HubSpot.');
