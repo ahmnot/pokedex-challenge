@@ -100,15 +100,29 @@
         <div class="pokemon-types-container">
             <div
                 class="pokemon-type"
-                style="background-color: {pokemon.type.color};"
+                style="background-color: {pokemon.type1.color};"
             >
                 <img
-                    src={pokemon.type.icon}
-                    alt={pokemon.type.label}
+                    src={pokemon.type1.icon}
+                    alt={pokemon.type1.label}
                     class="pokemon-type-icon"
                 />
-                <span class="pokemon-type-label">{pokemon.type.label}</span>
+                <span class="pokemon-type-label">{pokemon.type1.label}</span>
             </div>
+            {#if pokemon.type2 !== undefined}
+                <div
+                    class="pokemon-type"
+                    style="background-color: {pokemon.type2.color};"
+                >
+                    <img
+                        src={pokemon.type2.icon}
+                        alt={pokemon.type2.label}
+                        class="pokemon-type-icon"
+                    />
+                    <span class="pokemon-type-label">{pokemon.type2.label}</span
+                    >
+                </div>
+            {/if}
         </div>
     </div>
 </div>
@@ -228,10 +242,9 @@
 
     .pokemon-types-container {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: left;
-        align-items: left;
-        width: 255px;
+        width: 225px;
     }
 
     .pokemon-type {
@@ -249,7 +262,7 @@
         line-height: 17px;
         color: rgba(0, 0, 0, 0.7);
         box-sizing: border-box;
-        margin: 0;
+        margin-right: 5px;
     }
 
     .pokemon-type-icon {

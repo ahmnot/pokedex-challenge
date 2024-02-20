@@ -44,10 +44,26 @@
   let notAllowed = false;
 
   const typeToColorMap = {
-    Plante: "#19CC20", // Vert
-    Feu: "#EE942A", // Rouge orangé
-    Eau: "#A5E0E0", // Bleu
-    Insecte: "#CAE03F", // Vert olive
+    normal: "#a8a979",
+    fire: "#EE942A", // Rouge orangé
+    fighting: "#c13029",
+    water: "#A5E0E0", // Bleu
+    flying: "#a891f1",
+    grass: "#19CC20", // Vert
+    poison:"#a041a1",
+    electric :"#F9D031",
+    ground:"#e0c068",
+    psychic:"#f95889",
+    rock:"#b9a138",
+    ice:"#99d9d8",
+    bug: "#a8b820", // Vert olive
+    dragon:"#7138f9",
+    ghost:"#705999",
+    dark:"#705848",
+    steel:"#b9b9d0",
+    fairy:"#ef99ad",
+    stellar:"#7cc6b3",
+    unknown:"#5B5A5B",
   };
 
   /**
@@ -59,8 +75,9 @@
     const speciesData = await speciesResponse.json();
     const abilityResponse = await fetch(pokemon.abilities[0].ability.url);
     const abilityData = await abilityResponse.json();
-    const typeResponse = await fetch(pokemon.types[0].type.url);
-    const typeData = await typeResponse.json();
+    const type1Response = await fetch(pokemon.types[0].type.url);
+    const type1Data = await type1Response.json();
+
 
     // Formattage, différent entre données affichées et envoyées
     const name = speciesData.names.find((n) => n.language.name === "fr").name;
@@ -71,9 +88,11 @@
       .find((g) => g.language.name === "fr")
       .genus.replace("Pokémon ", "");
     const talent = abilityData.names.find((n) => n.language.name === "fr").name;
-    const pokemonType = typeData.names.find(
+    const pokemonType1 = type1Data.names.find(
       (n) => n.language.name === "fr",
     ).name;
+
+    console.log(pokemon.types);
 
     const pokemonDataForSending = {
       name: name,
@@ -83,8 +102,8 @@
       weight: pokemon.weight / 10,
       talent: talent,
       type: {
-        label: pokemonType,
-      },
+        label: pokemonType1,
+      }
     };
 
     pokemonsDataSent.pokemons.push(pokemonDataForSending);
@@ -98,12 +117,25 @@
       category: category,
       weight: `${(pokemon.weight / 10).toString().replace(".", ",")} kg`,
       talent: talent,
-      type: {
-        label: pokemonType,
-        color: typeToColorMap[pokemonType] || "#FFFFFF",
-        icon: `./pokemon-icons/${pokemonType.toLowerCase()}-icon.png`,
-      },
+      type1: {
+        label: pokemonType1,
+        color: typeToColorMap[type1Data.name] || "#FFFFFF",
+        icon: `./pokemon-icons/${type1Data.name}.png`,
+      }
     };
+
+    if (pokemon.types[1]) {
+      const type2Response = await fetch(pokemon.types[1].type.url);
+      const type2Data     = await type2Response.json();
+      const pokemonType2 = type2Data.names.find(
+        (n) => n.language.name === "fr",
+      ).name;
+      pokemonDataShown.type2 = {
+        label: pokemonType2,
+        color: typeToColorMap[type2Data.name] || "#FFFFFF",
+        icon: `./pokemon-icons/${type2Data.name}.png`,
+      }
+    }
 
     pokemonsLoaded[pokemon.id - 1] = pokemonDataShown;
 
