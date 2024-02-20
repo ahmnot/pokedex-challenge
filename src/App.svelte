@@ -19,12 +19,16 @@
   //   },
   // };
 
-  let nbrePokemons = 12;
+  let limit = 12; // Nombre de Pokémon à charger à chaque fois
+  let offset = 0; // Offset pour le chargement des Pokémon
+  let maxPokemons = 151;
+  let loadingMore = false;
 
+  let sentinel;
 
   /** Les données des cartes formatées pour l'affichage.*/
   let pokemonCardsShown = [];
-  let pokemonsLoaded = Array(nbrePokemons).fill(false);
+  let pokemonsLoaded = Array(maxPokemons).fill(false);
 
   /** Les données des cartes formatées pour l'enregistrement dans Hubspot. */
   let pokemonsDataSent = { pokemons: [] };
@@ -109,36 +113,62 @@
         // Si un Pokémon dans la séquence (dans l'ordre donc) n'est pas encore chargé, arrêt de la vérification
         break;
       }
-      if (!pokemonCardsShown.some(p => p.id === pokemonsLoaded[i].id)) {
+      if (pokemonsLoaded[i] && !pokemonCardsShown.some((p) => p.id === pokemonsLoaded[i].id)) {
         // Si le Pokémon est chargé mais pas encore affiché, ajout à l'affichage
         pokemonCardsShown = [...pokemonCardsShown, pokemonsLoaded[i]];
       }
     }
   }
 
+  async function loadPokemons(limit, startOffset) {
+  // Calculer le nombre restant de Pokémon à charger
+  const remaining = maxPokemons - startOffset;
+
+  // Si aucun Pokémon restant à charger, retourner immédiatement
+  if (remaining <= 0) return;
+
+  // Ajuste la limite si le nombre restant est inférieur à la limite de chargement
+  const effectiveLimit = Math.min(limit, remaining);
+
+  if (loadingMore || remaining === 0) return;
+    loadingMore = true;
+    // On boucle sur les Pokémons par Promise, ce qui permet de les charger en parallèle
+    const pokemonPromises = Array.from({ length: effectiveLimit }, (_, index) =>
+      fetch(
+        `https://pokeapi.co/api/v2/pokemon/${startOffset + index + 1}`,
+      ).then((response) => response.json()),
+    );
+
+    const pokemons = await Promise.all(pokemonPromises);
+
+    await Promise.all(pokemons.map((pokemon) => fetchPokemonDetails(pokemon)));
+
+    offset += effectiveLimit; // Mettre à jour l'offset pour le prochain chargement
+
+    loadingMore = false;
+  }
 
   onMount(async () => {
     loading = true;
     try {
-      // On boucle sur les Pokémons par Promise, ce qui permet de les charger en parallèle
-      const pokemonPromises = Array.from({ length: nbrePokemons }, (_, index) =>
-        fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`).then(
-          (response) => response.json(),
-        ),
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !loadingMore) {
+            loadPokemons(limit, offset);
+          }
+        },
+        {
+          rootMargin: "200px",
+        },
       );
 
-      const pokemons = await Promise.all(pokemonPromises);
-
-      await Promise.all(
-        pokemons.map((pokemon) => fetchPokemonDetails(pokemon)),
-      );
-
+      observer.observe(sentinel);
     } catch (error) {
-      isFetchingError = true;
       console.error(
         "Erreur lors du chargement des données des Pokémon:",
         error,
       );
+      isFetchingError = true;
     } finally {
       loading = false;
     }
@@ -223,10 +253,11 @@
 
   <div class="body-content">
     <div class="grid-container">
-        {#each pokemonCardsShown as pokemon (pokemon.id)}
-          <PokemonCard {pokemon} />
-        {/each}
+      {#each pokemonCardsShown as pokemon (pokemon.id)}
+        <PokemonCard {pokemon} />
+      {/each}
     </div>
+    <div bind:this={sentinel}></div>
   </div>
 </main>
 

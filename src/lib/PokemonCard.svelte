@@ -7,7 +7,7 @@
     export let pokemon;
 
     // Couleur de fond par défaut d'une image.
-    let backgroundColor = "#98d6cb";
+    let backgroundColor = "#ffffff";
 
     // État de sélection de la carte.
     let selected = false;
@@ -70,6 +70,7 @@
             src={pokemon.image}
             alt={pokemon.name}
             class="pokemon-image"
+            in:fade={{ duration: 300 }}
         />
     </div>
     <div class="pokemon-info" transition:fade={{ duration: 300 }}>
@@ -149,6 +150,7 @@
         height: 138px;
         background: #98d6cb; /* Couleur par défaut, remplacée à onMount. */
         border-radius: 20px;
+        transition: background-color 0.3s ease;
     }
 
     .pokemon-image {
@@ -260,7 +262,7 @@
     /* Zoom un peu moins grand sur les plus petits appareils. */
     @media (max-width: 720px) {
         .pokemon-card:hover {
-            transform: scale(1.10);
+            transform: scale(1.1);
             z-index: 10;
         }
     }
