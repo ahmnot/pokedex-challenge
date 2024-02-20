@@ -29,6 +29,8 @@
 
   let loading = false;
   let dataLoaded = false;
+  let isFetchingError = false;
+  let isHubspotError = false;
 
   let isButtonHovered = false;
 
@@ -117,6 +119,7 @@
       // Tri de pokemonCardsShown par l'ID du Pokémon pour les afficher dans l'ordre
       pokemonCardsShown.sort((a, b) => a.id - b.id);
     } catch (error) {
+      isFetchingError = true;
       console.error(
         "Erreur lors du chargement des données des Pokémon:",
         error,
@@ -128,6 +131,7 @@
 
   async function sendToHubSpot() {
     loading = true;
+    isHubspotError = false;
     try {
       // ICI est le lien d'appel à la Google Cloud Function.
       const response = await fetch(
@@ -146,6 +150,7 @@
         console.log("Succès :", result.message);
         dataLoaded = true;
       } else {
+        isHubspotError = true;
         console.error("Erreur lors de l'envoi à HubSpot");
       }
     } catch (error) {
@@ -186,10 +191,12 @@
         {#if loading}
           <div class="loader"></div>
         {:else}
-          {#if dataLoaded}
+          {#if dataLoaded && !isButtonHovered}
             Data sent. ✔️
-          {:else if notAllowed}
+          {:else if notAllowed && !isButtonHovered}
             Not allowed! ❌
+          {:else if isHubspotError && !isButtonHovered}
+            No Hubspot link! ❌
           {:else}
             Send to Hubspot
           {/if}
