@@ -92,7 +92,7 @@
                     >
                 </div>
                 <div class="pokemon-stat">
-                    Talent : <span class="grey-text">{pokemon.talent}</span>
+                    Talent : <span class="grey-text">{pokemon.talent1}</span>
                 </div>
             </div>
         </div>

@@ -73,11 +73,12 @@
   async function fetchPokemonDetails(pokemon) {
     const speciesResponse = await fetch(pokemon.species.url);
     const speciesData = await speciesResponse.json();
-    const abilityResponse = await fetch(pokemon.abilities[0].ability.url);
-    const abilityData = await abilityResponse.json();
+    const ability1Response = await fetch(pokemon.abilities[0].ability.url);
+    const ability1Data = await ability1Response.json();
     const type1Response = await fetch(pokemon.types[0].type.url);
     const type1Data = await type1Response.json();
 
+    console.log(speciesData.genera);
 
     // Formattage, différent entre données affichées et envoyées
     const name = speciesData.names.find((n) => n.language.name === "fr").name;
@@ -87,12 +88,11 @@
     const category = speciesData.genera
       .find((g) => g.language.name === "fr")
       .genus.replace("Pokémon ", "");
-    const talent = abilityData.names.find((n) => n.language.name === "fr").name;
+    const talent1 = ability1Data.names.find((n) => n.language.name === "fr").name;
+    const talent2 = "";
     const pokemonType1 = type1Data.names.find(
       (n) => n.language.name === "fr",
     ).name;
-
-    console.log(pokemon.types);
 
     const pokemonDataForSending = {
       name: name,
@@ -100,7 +100,7 @@
       size: pokemon.height / 10,
       category: category,
       weight: pokemon.weight / 10,
-      talent: talent,
+      talent: talent1,
       type: {
         label: pokemonType1,
       }
@@ -116,7 +116,8 @@
       size: `${(pokemon.height / 10).toString().replace(".", ",")} m`,
       category: category,
       weight: `${(pokemon.weight / 10).toString().replace(".", ",")} kg`,
-      talent: talent,
+      talent1: talent1,
+      talent2: talent2,
       type1: {
         label: pokemonType1,
         color: typeToColorMap[type1Data.name] || "#FFFFFF",
