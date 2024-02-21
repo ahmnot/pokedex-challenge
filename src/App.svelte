@@ -319,7 +319,7 @@
     background: #cb575d;
     top: 0;
     left: 50%;
-    transform: translateX(-46.5%);
+      transform: translateX(-50%);
     filter: drop-shadow(0 0 2rem rgba(52, 7, 11, 0.3));
   }
 
@@ -530,8 +530,11 @@
   }
 
   .grid-container {
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Grille de 4 colonnes. */
+    left: 50%;
+    grid-template-columns: repeat(4, 1fr);
+    transform: translateX(-54%);
   }
 
   /** PARTIE RESPONSIVENESS */
@@ -539,6 +542,8 @@
   /* Taille moyenne-grande */
   @media (max-width: 1570px) {
     .grid-container {
+    position: static;
+    transform: translateX(0);
       grid-template-columns: repeat(3, 1fr);
     }
 
