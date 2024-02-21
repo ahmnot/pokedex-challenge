@@ -7,7 +7,7 @@ const { Client } = require('@hubspot/api-client');
 const cors = require('cors');
 
 // cors permet toutes les origines là, mais à changer par le nom du site sur lequel je déploie ensuite.
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({ origin: ['https://pokedex-challenge-othman.tiiny.site/'] });
 //{
 //    origin: ['https://www.votre-site-web.com', 'https://staging.votre-site-web.com'],
 //}
