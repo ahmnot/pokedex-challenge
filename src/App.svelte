@@ -21,7 +21,7 @@
 
   let limit = 12; // Nombre de Pokémon à charger à chaque fois
   let offset = 0; // Offset pour le chargement des Pokémon
-  let maxPokemons = 500;
+  let maxPokemons = 151;
   let loadingMore = false;
 
   let sentinel;
