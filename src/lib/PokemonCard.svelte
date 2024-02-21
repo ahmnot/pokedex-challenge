@@ -91,8 +91,12 @@
                     Catégorie : <span class="grey-text">{pokemon.category}</span
                     >
                 </div>
-                <div class="pokemon-stat">
-                    Talent : <span class="grey-text">{pokemon.talent1}</span>
+                <div class="pokemon-stat-talent">
+                    {#if pokemon.talent2 !== undefined}
+                        Talents : <span class="grey-text">{pokemon.talent1}, {pokemon.talent2}</span>
+                    {:else}
+                        Talent : <span class="grey-text">{pokemon.talent1}</span>
+                    {/if}
                 </div>
             </div>
         </div>
@@ -225,10 +229,11 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: baseline;
         padding: 0px;
         gap: 35px;
         width: 100%;
+        white-space: nowrap;
     }
 
     .pokemon-stat {
@@ -237,7 +242,15 @@
         font-size: 14px;
         line-height: 17px;
         text-align: left;
-        color: #000000;
+    }
+
+    .pokemon-stat-talent {
+        font-family: "Signika", sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 17px;
+        text-align: left;
+        white-space: wrap;
     }
 
     .pokemon-types-container {

@@ -21,7 +21,7 @@
 
   let limit = 12; // Nombre de Pokémon à charger à chaque fois
   let offset = 0; // Offset pour le chargement des Pokémon
-  let maxPokemons = 151;
+  let maxPokemons = 500;
   let loadingMore = false;
 
   let sentinel;
@@ -50,20 +50,20 @@
     water: "#A5E0E0", // Bleu
     flying: "#a891f1",
     grass: "#19CC20", // Vert
-    poison:"#a041a1",
-    electric :"#F9D031",
-    ground:"#e0c068",
-    psychic:"#f95889",
-    rock:"#b9a138",
-    ice:"#99d9d8",
+    poison: "#a041a1",
+    electric: "#F9D031",
+    ground: "#e0c068",
+    psychic: "#f95889",
+    rock: "#b9a138",
+    ice: "#99d9d8",
     bug: "#a8b820", // Vert olive
-    dragon:"#7138f9",
-    ghost:"#705999",
-    dark:"#705848",
-    steel:"#b9b9d0",
-    fairy:"#ef99ad",
-    stellar:"#7cc6b3",
-    unknown:"#5B5A5B",
+    dragon: "#7138f9",
+    ghost: "#705999",
+    dark: "#705848",
+    steel: "#b9b9d0",
+    fairy: "#ef99ad",
+    stellar: "#7cc6b3",
+    unknown: "#5B5A5B",
   };
 
   /**
@@ -88,8 +88,9 @@
     const category = speciesData.genera
       .find((g) => g.language.name === "fr")
       .genus.replace("Pokémon ", "");
-    const talent1 = ability1Data.names.find((n) => n.language.name === "fr").name;
-    const talent2 = "";
+    const talent1 = ability1Data.names.find(
+      (n) => n.language.name === "fr",
+    ).name;
     const pokemonType1 = type1Data.names.find(
       (n) => n.language.name === "fr",
     ).name;
@@ -103,7 +104,7 @@
       talent: talent1,
       type: {
         label: pokemonType1,
-      }
+      },
     };
 
     pokemonsDataSent.pokemons.push(pokemonDataForSending);
@@ -117,17 +118,16 @@
       category: category,
       weight: `${(pokemon.weight / 10).toString().replace(".", ",")} kg`,
       talent1: talent1,
-      talent2: talent2,
       type1: {
         label: pokemonType1,
         color: typeToColorMap[type1Data.name] || "#FFFFFF",
         icon: `./pokemon-icons/${type1Data.name}.png`,
-      }
+      },
     };
 
     if (pokemon.types[1]) {
       const type2Response = await fetch(pokemon.types[1].type.url);
-      const type2Data     = await type2Response.json();
+      const type2Data = await type2Response.json();
       const pokemonType2 = type2Data.names.find(
         (n) => n.language.name === "fr",
       ).name;
@@ -135,7 +135,15 @@
         label: pokemonType2,
         color: typeToColorMap[type2Data.name] || "#FFFFFF",
         icon: `./pokemon-icons/${type2Data.name}.png`,
-      }
+      };
+    }
+
+    if (pokemon.abilities[1]) {
+      const ability2Response = await fetch(pokemon.abilities[1].ability.url);
+      const ability2Data = await ability2Response.json();
+      pokemonDataShown.talent2 = ability2Data.names.find(
+        (n) => n.language.name === "fr",
+      ).name;
     }
 
     pokemonsLoaded[pokemon.id - 1] = pokemonDataShown;
@@ -146,7 +154,10 @@
         // Si un Pokémon dans la séquence (dans l'ordre donc) n'est pas encore chargé, arrêt de la vérification
         break;
       }
-      if (pokemonsLoaded[i] && !pokemonCardsShown.some((p) => p.id === pokemonsLoaded[i].id)) {
+      if (
+        pokemonsLoaded[i] &&
+        !pokemonCardsShown.some((p) => p.id === pokemonsLoaded[i].id)
+      ) {
         // Si le Pokémon est chargé mais pas encore affiché, ajout à l'affichage
         pokemonCardsShown = [...pokemonCardsShown, pokemonsLoaded[i]];
       }
@@ -154,16 +165,16 @@
   }
 
   async function loadPokemons(limit, startOffset) {
-  // Calculer le nombre restant de Pokémon à charger
-  const remaining = maxPokemons - startOffset;
+    // Calcul du nombre restant de Pokémon à charger
+    const remaining = maxPokemons - startOffset;
 
-  // Si aucun Pokémon restant à charger, retourner immédiatement
-  if (remaining <= 0) return;
+    // Si aucun Pokémon restant à charger arrêter
+    if (remaining <= 0) return;
 
-  // Ajuste la limite si le nombre restant est inférieur à la limite de chargement
-  const effectiveLimit = Math.min(limit, remaining);
+    // Ajuste la limite si le nombre restant est inférieur à la limite de chargement
+    const effectiveLimit = Math.min(limit, remaining);
 
-  if (loadingMore || remaining === 0) return;
+    if (loadingMore || remaining === 0) return;
     loadingMore = true;
     // On boucle sur les Pokémons par Promise, ce qui permet de les charger en parallèle
     const pokemonPromises = Array.from({ length: effectiveLimit }, (_, index) =>
@@ -176,7 +187,7 @@
 
     await Promise.all(pokemons.map((pokemon) => fetchPokemonDetails(pokemon)));
 
-    offset += effectiveLimit; // Mettre à jour l'offset pour le prochain chargement
+    offset += effectiveLimit; // Màj de l'offset pour le prochain chargement
 
     loadingMore = false;
   }
@@ -292,6 +303,9 @@
     </div>
     <div bind:this={sentinel}></div>
   </div>
+  {#if loadingMore}
+    <div class="loader-bottom"></div>
+  {/if}
 </main>
 
 <style>
@@ -476,6 +490,19 @@
 
   /* Le loader-spinner. */
   .loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3a84d1; /* Couleur de la bordure */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 2s linear infinite;
+  }
+
+  .loader-bottom {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3a84d1; /* Couleur de la bordure */
     border-radius: 50%;
