@@ -41,7 +41,7 @@
   let isButtonHovered = false;
 
   /** Sert pour le build public (pour éviter de me faire spammer) */
-  let notAllowed = false;
+  let notAllowed = true;
 
   const typeToColorMap = {
     normal: "#a8a979",
@@ -219,6 +219,9 @@
   });
 
   async function sendToHubSpot() {
+    if(notAllowed) {
+      return;
+    }
     loading = true;
     isHubspotError = false;
     try {
@@ -282,8 +285,8 @@
         {:else}
           {#if dataLoaded && !isButtonHovered}
             Data sent. ✔️
-          {:else if notAllowed && !isButtonHovered}
-            Not allowed! ❌
+          {:else if notAllowed}
+            Coming soon! 💎
           {:else if isHubspotError && !isButtonHovered}
             No Hubspot link! ❌
           {:else}
@@ -500,15 +503,15 @@
 
   .loader-bottom {
     position: fixed;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 15px;
+    left: 95%;
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3a84d1; /* Couleur de la bordure */
     border-radius: 50%;
     width: 24px;
     height: 24px;
     animation: spin 2s linear infinite;
+    z-index: 10;
   }
 
   @keyframes spin {
@@ -678,6 +681,10 @@
     .rectangle-2-patch-1,
     .rectangle-2-patch-2 {
       display: none;
+    }
+
+    .loader-bottom {
+      left: 85%;
     }
   }
 </style>
