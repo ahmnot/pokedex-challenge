@@ -92,7 +92,9 @@
                     >
                 </div>
                 <div class="pokemon-stat-talent">
-                    {#if pokemon.talent2 !== undefined}
+                    {#if pokemon.talent3 !== undefined}
+                    Talents : <span class="grey-text">{pokemon.talent1}, {pokemon.talent2}, {pokemon.talent3}</span>
+                    {:else if pokemon.talent2 !== undefined}
                         Talents : <span class="grey-text">{pokemon.talent1}, {pokemon.talent2}</span>
                     {:else}
                         Talent : <span class="grey-text">{pokemon.talent1}</span>

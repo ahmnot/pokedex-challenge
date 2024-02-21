@@ -78,8 +78,6 @@
     const type1Response = await fetch(pokemon.types[0].type.url);
     const type1Data = await type1Response.json();
 
-    console.log(speciesData.genera);
-
     // Formattage, différent entre données affichées et envoyées
     const name = speciesData.names.find((n) => n.language.name === "fr").name;
     const description = speciesData.flavor_text_entries.find(
@@ -142,6 +140,14 @@
       const ability2Response = await fetch(pokemon.abilities[1].ability.url);
       const ability2Data = await ability2Response.json();
       pokemonDataShown.talent2 = ability2Data.names.find(
+        (n) => n.language.name === "fr",
+      ).name;
+    }
+
+    if (pokemon.abilities[2]) {
+      const ability3Response = await fetch(pokemon.abilities[2].ability.url);
+      const ability3Data = await ability3Response.json();
+      pokemonDataShown.talent3 = ability3Data.names.find(
         (n) => n.language.name === "fr",
       ).name;
     }
