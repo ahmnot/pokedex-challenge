@@ -326,7 +326,7 @@
   .loader-top {
     position: absolute;
     top: 50%;
-    left: 47.8%;
+    left: calc(50% - 35px);
     border: 10px solid #f3f3f3;
     border-top: 10px solid #3a84d1; /* Couleur de la bordure */
     border-radius: 50%;
