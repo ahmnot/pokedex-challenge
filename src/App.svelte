@@ -336,6 +336,19 @@
     z-index: 10;
   }
 
+  .loader-bottom {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3a84d1; /* Couleur de la bordure */
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    animation: spin 2s linear infinite;
+    z-index: 10;
+  }
+
   /* Conteneur de la banner. */
   .banner {
     position: absolute;
@@ -525,19 +538,6 @@
     animation: spin 2s linear infinite;
   }
 
-  .loader-bottom {
-    position: fixed;
-    bottom: 1%;
-    left: 95%;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3a84d1; /* Couleur de la bordure */
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 2s linear infinite;
-    z-index: 10;
-  }
-
   @keyframes spin {
     0% {
       transform: rotate(0deg);
@@ -710,10 +710,6 @@
     .rectangle-2-patch-1,
     .rectangle-2-patch-2 {
       display: none;
-    }
-
-    .loader-bottom {
-      left: 85%;
     }
   }
 </style>
