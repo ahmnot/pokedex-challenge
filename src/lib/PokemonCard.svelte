@@ -252,7 +252,7 @@
         font-size: 14px;
         line-height: 17px;
         text-align: left;
-        white-space: wrap;
+        white-space: normal;
     }
 
     .pokemon-types-container {
