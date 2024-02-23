@@ -210,7 +210,7 @@
           }
         },
         {
-          rootMargin: "200px",
+          rootMargin: "300px",
         },
       );
 
@@ -317,7 +317,7 @@
     </div>
     <div bind:this={sentinel}></div>
   </div>
-  {#if loadingMore}
+  {#if loadingMore && !firstTimeLoading}
     <div class="loader-bottom"></div>
   {/if}
 </main>
@@ -326,7 +326,7 @@
   .loader-top {
     position: absolute;
     top: 50%;
-    left: 47.8%;
+    left: calc(50% - 35px);
     border: 10px solid #f3f3f3;
     border-top: 10px solid #3a84d1; /* Couleur de la bordure */
     border-radius: 50%;
@@ -527,7 +527,7 @@
 
   .loader-bottom {
     position: fixed;
-    bottom: 15px;
+    bottom: 1%;
     left: 95%;
     border: 4px solid #f3f3f3;
     border-top: 4px solid #3a84d1; /* Couleur de la bordure */
