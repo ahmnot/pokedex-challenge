@@ -33,6 +33,7 @@
   /** Les données des cartes formatées pour l'enregistrement dans Hubspot. */
   let pokemonsDataSent = { pokemons: [] };
 
+  let firstTimeLoading = true;
   let loading = false;
   let dataLoaded = false;
   let isFetchingError = false;
@@ -196,6 +197,7 @@
     offset += effectiveLimit; // Màj de l'offset pour le prochain chargement
 
     loadingMore = false;
+    firstTimeLoading = false;
   }
 
   onMount(async () => {
@@ -225,7 +227,7 @@
   });
 
   async function sendToHubSpot() {
-    if(notAllowed) {
+    if (notAllowed) {
       return;
     }
     loading = true;
@@ -305,6 +307,9 @@
   </div>
 
   <div class="body-content">
+    {#if loadingMore && firstTimeLoading}
+      <div class="loader-top"></div>
+    {/if}
     <div class="grid-container">
       {#each pokemonCardsShown as pokemon (pokemon.id)}
         <PokemonCard {pokemon} />
@@ -318,6 +323,19 @@
 </main>
 
 <style>
+  .loader-top {
+    position: absolute;
+    top: 50%;
+    left: 47.8%;
+    border: 10px solid #f3f3f3;
+    border-top: 10px solid #3a84d1; /* Couleur de la bordure */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    z-index: 10;
+  }
+
   /* Conteneur de la banner. */
   .banner {
     position: absolute;
@@ -325,7 +343,7 @@
     background: #cb575d;
     top: 0;
     left: 50%;
-      transform: translateX(-50%);
+    transform: translateX(-50%);
     filter: drop-shadow(0 0 2rem rgba(52, 7, 11, 0.3));
   }
 
@@ -548,8 +566,8 @@
   /* Taille moyenne-grande */
   @media (max-width: 1570px) {
     .grid-container {
-    position: static;
-    transform: translateX(0);
+      position: static;
+      transform: translateX(0);
       grid-template-columns: repeat(3, 1fr);
     }
 
