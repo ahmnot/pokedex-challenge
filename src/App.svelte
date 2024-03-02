@@ -72,27 +72,25 @@
    * @param pokemon
    */
   async function fetchPokemonDetails(pokemon) {
-    const speciesResponse = await fetch(pokemon.species.url);
-    const speciesData = await speciesResponse.json();
-    const ability1Response = await fetch(pokemon.abilities[0].ability.url);
-    const ability1Data = await ability1Response.json();
-    const type1Response = await fetch(pokemon.types[0].type.url);
-    const type1Data = await type1Response.json();
+    // Fetch details in parallel
+    const responses = await Promise.all([
+        fetch(pokemon.species.url).then((res) => res.json()),
+        fetch(pokemon.abilities[0].ability.url).then((res) => res.json()),
+        fetch(pokemon.types[0].type.url).then((res) => res.json()),
+        // Handle potential additional types and abilities in the same way
+        pokemon.types[1] ? fetch(pokemon.types[1].type.url).then((res) => res.json()) : Promise.resolve(null),
+        pokemon.abilities[1] ? fetch(pokemon.abilities[1].ability.url).then((res) => res.json()) : Promise.resolve(null),
+        pokemon.abilities[2] ? fetch(pokemon.abilities[2].ability.url).then((res) => res.json()) : Promise.resolve(null),
+    ]);
+
+    const [speciesData, ability1Data, type1Data, type2Data, ability2Data] = responses;
 
     // Formattage, différent entre données affichées et envoyées
     const name = speciesData.names.find((n) => n.language.name === "fr").name;
-    const description = speciesData.flavor_text_entries.find(
-      (e) => e.language.name === "fr",
-    ).flavor_text;
-    const category = speciesData.genera
-      .find((g) => g.language.name === "fr")
-      .genus.replace("Pokémon ", "");
-    const talent1 = ability1Data.names.find(
-      (n) => n.language.name === "fr",
-    ).name;
-    const pokemonType1 = type1Data.names.find(
-      (n) => n.language.name === "fr",
-    ).name;
+    const description = speciesData.flavor_text_entries.find((e) => e.language.name === "fr").flavor_text;
+    const category = speciesData.genera.find((g) => g.language.name === "fr").genus.replace("Pokémon ", "");
+    const talent1 = ability1Data.names.find((n) => n.language.name === "fr").name;
+    const pokemonType1 = type1Data.names.find((n) => n.language.name === "fr").name;
 
     const pokemonDataForSending = {
       name: name,
@@ -124,33 +122,17 @@
       },
     };
 
-    if (pokemon.types[1]) {
-      const type2Response = await fetch(pokemon.types[1].type.url);
-      const type2Data = await type2Response.json();
-      const pokemonType2 = type2Data.names.find(
-        (n) => n.language.name === "fr",
-      ).name;
-      pokemonDataShown.type2 = {
-        label: pokemonType2,
-        color: typeToColorMap[type2Data.name] || "#FFFFFF",
-        icon: `./pokemon-icons/${type2Data.name}.png`,
-      };
+    if (type2Data) {
+        const pokemonType2 = type2Data.names.find(n => n.language.name === "fr").name;
+        pokemonDataShown.type2 = {
+          label: pokemonType2,
+          color: typeToColorMap[type2Data.name] || "#FFFFFF",
+          icon: `./pokemon-icons/${type2Data.name}.png`,
+        };
     }
 
-    if (pokemon.abilities[1]) {
-      const ability2Response = await fetch(pokemon.abilities[1].ability.url);
-      const ability2Data = await ability2Response.json();
-      pokemonDataShown.talent2 = ability2Data.names.find(
-        (n) => n.language.name === "fr",
-      ).name;
-    }
-
-    if (pokemon.abilities[2]) {
-      const ability3Response = await fetch(pokemon.abilities[2].ability.url);
-      const ability3Data = await ability3Response.json();
-      pokemonDataShown.talent3 = ability3Data.names.find(
-        (n) => n.language.name === "fr",
-      ).name;
+    if (ability2Data) {
+      pokemonDataShown.talent2 = ability2Data.names.find((n) => n.language.name === "fr").name;
     }
 
     pokemonsLoaded[pokemon.id - 1] = pokemonDataShown;
@@ -191,6 +173,8 @@
     );
 
     const pokemons = await Promise.all(pokemonPromises);
+
+    console.log(pokemons);
 
     await Promise.all(pokemons.map((pokemon) => fetchPokemonDetails(pokemon)));
 
