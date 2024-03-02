@@ -92,43 +92,37 @@
                     >
                 </div>
                 <div class="pokemon-stat-talent">
-                    {#if pokemon.talent3 !== undefined}
-                    Talents : <span class="grey-text">{pokemon.talent1}, {pokemon.talent2}, {pokemon.talent3}</span>
-                    {:else if pokemon.talent2 !== undefined}
-                        Talents : <span class="grey-text">{pokemon.talent1}, {pokemon.talent2}</span>
+                    {#if pokemon.abilities.length === 1}
+                        Talent : <span class="grey-text">
+                            {pokemon.abilities[0]}
+                        </span>
                     {:else}
-                        Talent : <span class="grey-text">{pokemon.talent1}</span>
+                        Talents : <span class="grey-text">
+                            {#each pokemon.abilities as onePokemonAbility, index}
+                                {onePokemonAbility}{index < pokemon.abilities.length - 1 ? ', ' : ''}
+                            {/each}
+                        </span>
                     {/if}
                 </div>
             </div>
         </div>
         <hr class="pokemon-card-hr" />
         <div class="pokemon-types-container">
-            <div
-                class="pokemon-type"
-                style="background-color: {pokemon.type1.color};"
-            >
-                <img
-                    src={pokemon.type1.icon}
-                    alt={pokemon.type1.label}
-                    class="pokemon-type-icon"
-                />
-                <span class="pokemon-type-label">{pokemon.type1.label}</span>
-            </div>
-            {#if pokemon.type2 !== undefined}
+            {#each pokemon.types as onePokemonType}
                 <div
                     class="pokemon-type"
-                    style="background-color: {pokemon.type2.color};"
+                    style="background-color: {onePokemonType.color};"
                 >
                     <img
-                        src={pokemon.type2.icon}
-                        alt={pokemon.type2.label}
+                        src={onePokemonType.icon}
+                        alt={onePokemonType.label}
                         class="pokemon-type-icon"
                     />
-                    <span class="pokemon-type-label">{pokemon.type2.label}</span
+                    <span class="pokemon-type-label"
+                        >{onePokemonType.label}</span
                     >
                 </div>
-            {/if}
+            {/each}
         </div>
     </div>
 </div>

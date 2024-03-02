@@ -1,6 +1,8 @@
 <script>
   import { onMount } from "svelte";
   import PokemonCard from "./lib/PokemonCard.svelte";
+  import { writable } from "svelte/store";
+  import {typeToColorMap, typeFrenchTranslation, abilitiesFrenchTranslation} from "./lib/jsonLists";
 
   // Exemple d'objet Pokémon
   // const pokemon = {
@@ -18,6 +20,7 @@
   //     icon: "./pokemon-icons/plante-icon.png",
   //   },
   // };
+  const pokemonTypes = writable([]);
 
   let limit = 12; // Nombre de Pokémon à charger à chaque fois
   let offset = 0; // Offset pour le chargement des Pokémon
@@ -44,29 +47,6 @@
   /** Sert pour le build public (pour éviter de me faire spammer) */
   let notAllowed = true;
 
-  const typeToColorMap = {
-    normal: "#a8a979",
-    fire: "#EE942A", // Rouge orangé
-    fighting: "#c13029",
-    water: "#A5E0E0", // Bleu
-    flying: "#a891f1",
-    grass: "#19CC20", // Vert
-    poison: "#a041a1",
-    electric: "#F9D031",
-    ground: "#e0c068",
-    psychic: "#f95889",
-    rock: "#b9a138",
-    ice: "#99d9d8",
-    bug: "#a8b820", // Vert olive
-    dragon: "#7138f9",
-    ghost: "#705999",
-    dark: "#705848",
-    steel: "#b9b9d0",
-    fairy: "#ef99ad",
-    stellar: "#7cc6b3",
-    unknown: "#5B5A5B",
-  };
-
   /**
    * Sert à récupérer des données de traduction ou autres, et à remplir les données affichées et envoyées.
    * @param pokemon
@@ -75,22 +55,29 @@
     // Fetch details in parallel
     const responses = await Promise.all([
         fetch(pokemon.species.url).then((res) => res.json()),
-        fetch(pokemon.abilities[0].ability.url).then((res) => res.json()),
-        fetch(pokemon.types[0].type.url).then((res) => res.json()),
-        // Handle potential additional types and abilities in the same way
-        pokemon.types[1] ? fetch(pokemon.types[1].type.url).then((res) => res.json()) : Promise.resolve(null),
-        pokemon.abilities[1] ? fetch(pokemon.abilities[1].ability.url).then((res) => res.json()) : Promise.resolve(null),
-        pokemon.abilities[2] ? fetch(pokemon.abilities[2].ability.url).then((res) => res.json()) : Promise.resolve(null),
     ]);
 
-    const [speciesData, ability1Data, type1Data, type2Data, ability2Data] = responses;
+    const [speciesData] = responses;
 
     // Formattage, différent entre données affichées et envoyées
     const name = speciesData.names.find((n) => n.language.name === "fr").name;
     const description = speciesData.flavor_text_entries.find((e) => e.language.name === "fr").flavor_text;
     const category = speciesData.genera.find((g) => g.language.name === "fr").genus.replace("Pokémon ", "");
-    const talent1 = ability1Data.names.find((n) => n.language.name === "fr").name;
-    const pokemonType1 = type1Data.names.find((n) => n.language.name === "fr").name;
+
+    const types = pokemon.types.map((typeEntry) => {
+      const typeName = typeEntry.type.name; // The type name, e.g., "grass"
+      const typeFrenchName = typeFrenchTranslation[typeName] || typeName; // Translate to French, defaulting to the English name if not found
+
+      const color = typeToColorMap[typeName] || "#FFFFFF"; // Map type name to a color
+      const icon = `./pokemon-icons/${typeName}.png`; // Construct path to an icon
+
+      return { label: typeFrenchName, color, icon };
+    });
+
+
+    const abilities = pokemon.abilities.map((abilityEntry) => {
+      return abilitiesFrenchTranslation[abilityEntry.ability.name] || abilityEntry.ability.name;
+    });
 
     const pokemonDataForSending = {
       name: name,
@@ -98,9 +85,9 @@
       size: pokemon.height / 10,
       category: category,
       weight: pokemon.weight / 10,
-      talent: talent1,
+      talent: abilities[0],
       type: {
-        label: pokemonType1,
+        label: types[0],
       },
     };
 
@@ -114,26 +101,11 @@
       size: `${(pokemon.height / 10).toString().replace(".", ",")} m`,
       category: category,
       weight: `${(pokemon.weight / 10).toString().replace(".", ",")} kg`,
-      talent1: talent1,
-      type1: {
-        label: pokemonType1,
-        color: typeToColorMap[type1Data.name] || "#FFFFFF",
-        icon: `./pokemon-icons/${type1Data.name}.png`,
-      },
+      abilities: abilities,
+      types : types
     };
 
-    if (type2Data) {
-        const pokemonType2 = type2Data.names.find(n => n.language.name === "fr").name;
-        pokemonDataShown.type2 = {
-          label: pokemonType2,
-          color: typeToColorMap[type2Data.name] || "#FFFFFF",
-          icon: `./pokemon-icons/${type2Data.name}.png`,
-        };
-    }
-
-    if (ability2Data) {
-      pokemonDataShown.talent2 = ability2Data.names.find((n) => n.language.name === "fr").name;
-    }
+    console.log(pokemonDataShown)
 
     pokemonsLoaded[pokemon.id - 1] = pokemonDataShown;
 
@@ -187,6 +159,13 @@
   onMount(async () => {
     loading = true;
     try {
+      // Fetching all Pokémon types at once
+      const typesResponse = await fetch(`https://pokeapi.co/api/v2/type`);
+      const typesData = await typesResponse.json();
+      pokemonTypes.set(typesData.results);
+
+
+
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && !loadingMore) {
@@ -317,7 +296,7 @@
     width: 50px;
     height: 50px;
     animation: spin 2s linear infinite;
-    z-index: 10;
+    z-index: 0;
   }
 
   .loader-bottom {
