@@ -105,8 +105,6 @@
       types : types
     };
 
-    console.log(pokemonDataShown)
-
     pokemonsLoaded[pokemon.id - 1] = pokemonDataShown;
 
     // Affichage des pokémons dans l'ordre
@@ -145,8 +143,6 @@
     );
 
     const pokemons = await Promise.all(pokemonPromises);
-
-    console.log(pokemons);
 
     await Promise.all(pokemons.map((pokemon) => fetchPokemonDetails(pokemon)));
 
