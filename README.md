@@ -14,3 +14,5 @@ To build the app/website, run "npm run build".
 If you want to be able to send data to Hubspot, you have to set up the call to the Google Cloud Function in App.svelte.
 
 Code for the node.js Google Cloud Functions is here: /server/index.js.
+
+![pokedex-challenge4](https://github.com/user-attachments/assets/928cff20-267d-46f8-8415-756df86459ee)
